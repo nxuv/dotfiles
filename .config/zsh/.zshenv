@@ -24,9 +24,11 @@ export PATH="/usr/sbin:$PATH"
 export PATH="/var/lib/flatpak/exports/bin/:$PATH"
 
 # zsh config
-export HISTFILE="$XDG_DATA_HOME/zsh/history"
-export HISTZIE="8192"
-export SAVEHIST="8192"
+if [ -f "$XDG_DATA_HOME/zsh/history" ]; then
+    export HISTFILE="$XDG_DATA_HOME/zsh/history"
+    export HISTZIE="8192"
+    export SAVEHIST="8192"
+fi
 
 # Misc env
 export DXVK_ASYNC=1
@@ -59,13 +61,38 @@ export ZK_NOTEBOOK_DIR="$HOME/zk"
 export LYNX_CFG="$XDG_CONFIG_HOME/lynx/lynx.cfg"
 [ -d "/g" ] && export DEVDOCS_DIR="/g/devdocs/" || export DEVDOCS_DIR="$XDG_DATA_HOME/devdocs/"
 
+export JUST_TEMPDIR="/tmp"
+
+# export NNN_PLUG="p:-!less -iR '$nnn'*;d:-!gum confirm 'Delete $nnn?' && rm '$nnn'"
+export NNN_PLUG='d:dragdrop;x:!chmod +x "$nnn"*;X:!chmod -x "$nnn"*;f:!bat --tabs 4 --color always --theme ansi --paging always --style=plain,numbers -n "$nnn"*'
+# Order                     Hex     Color
+# Block_device              c1      DarkSeaGreen1
+# Char_device               e2      Yellow1
+# Directory                 27      DeepSkyBlue1
+# Executable                2e      Green1
+# Regular                   00      Normal
+# Hard_link                 60      Plum4
+# Symbolic_link             33      Cyan1
+# Missing_OR_file           details f7 Grey62
+# Orphaned_symbolic         link    c6 DeepPink1
+# FIFO                      d6      Orange1
+# Socket                    ab      MediumOrchid1
+# Unknown_OR_0B_regular/exe c4      Red1
+#                    | | | | | | | | | | |
+export NNN_FCOLORS="0203040200050608030501"
+# NNN_FCOLORS='c1e2272e006033f7c6d6abc4'
+# NNN_COLORS='1234' ('#0a1b2c3d'/'#0a1b2c3d;1234')
+
 # Program dependant PATH
 # PATH="$RUBY_GEMS:$PATH"
 # PATH="$RUBY_ROOT:$PATH"
 
-for dir in $XDG_DATA_HOME/gem/ruby/*/bin; do
-    [ -d "$dir" ] && export PATH="$dir:$PATH"
-done
+# TODO: check if it exists
+if [ -d "$XDG_DATA_HOME/gem/ruby" ]; then
+    for dir in $XDG_DATA_HOME/gem/ruby/*/bin; do
+        [ -d "$dir" ] && export PATH="$dir:$PATH"
+    done
+fi
 
 export PATH="$(echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}')"
 

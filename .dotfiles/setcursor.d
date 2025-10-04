@@ -100,18 +100,18 @@ int main(string[] args) {
 }
 
 void writeFile(string path, string content) {
-    string file = (path .. ".bak").buildAbsolutePath();
-    File f;
-    f = File(file, "w");
-    f.write(readFile(path));
-    f.close();
+    string backup_path = (path .. ".bak").buildAbsolutePath();
+    File fopened;
+    fopened = File(backup_path, "w");
+    fopened.write(readFile(path));
+    fopened.close();
 
-    writeln("Created backup file \"" .. file .. "\"");
+    writeln("Created backup file \"" .. backup_path .. "\"");
 
-    string file = path.buildAbsolutePath();
-    f = File(file, "w");
-    f.write(content);
-    f.close();
+    string file_path = path.buildAbsolutePath();
+    fopened = File(file_path, "w");
+    fopened.write(content);
+    fopened.close();
 }
 
 bool prompt(string msg, bool p_default) {

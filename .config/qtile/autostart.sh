@@ -26,3 +26,15 @@ sleep 1
 
 xinput --map-to-output 'Melfas LGDisplay Incell Touch' DisplayPort-0
 
+# - ---------------------------------------------------------------------------- -
+# -                    /etc/X11/xorg.conf.d/40-libinput.conf                     -
+# - ---------------------------------------------------------------------------- -
+# Section "InputClass"
+#         Identifier "Logitech ERGO M575"
+#         MatchIsPointer "on"
+#         Driver "libinput"
+# 	Option "AccelProfile" "adaptive" # "flat"
+# 	Option "AccelSpeed" "-0.4"
+# EndSection
+# - ---------------------------------------------------------------------------- -
+

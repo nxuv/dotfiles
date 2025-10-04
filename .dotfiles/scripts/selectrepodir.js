@@ -26,7 +26,7 @@ function join_array(arr, sep) {
 }
 
 function eza(dir, color = false) {
-    let out = $(`eza -1a --color=${color ? "always" : "never"} --no-symlinks --git-ignore --group-directories-first -F=always ` + dir);
+    let out = $(`eza -1a --color=${color ? "always" : "never"} --no-symlinks --git-ignore -D -F=always ` + dir);
     // echo(out);
     return out.split("\n");
 }
@@ -39,6 +39,8 @@ for (let user of userlist) {
     if (user == "") continue;
     if (!user.endsWith("/")) continue;
     if (user.startsWith(".")) continue;
+    if (user.startsWith("$")) continue;
+    if (user.startsWith("'")) continue;
     if (exists(proj_dir + "/" + user + ".nonrepo")) continue;
     if (exists(proj_dir + "/" + user + ".metarepo")) {
         repolist.push(user.substring(0, user.length - 1));
@@ -59,5 +61,6 @@ for (let user of userlist) {
 // console.log(repolist);
 
 // exec(`cd "${proj_dir}/$(gum filter --indicator="-" --header="Cloned Repositories" --limit=1 --select-if-one  "${repolist.join(`" "`)}")"`, {echoCommand:false});
+
 exec(`echo ${proj_dir}/$(echo '${repolist.join(`\n`)}' | fzf --prompt="Select repo > " --layout=reverse --height=35%)`, {echoCommand:false});
 

@@ -26,9 +26,9 @@ from theme import theme
 #     }
 
 layout_theme = {
-    "border_width":        1,
+    "border_width":        2,
     # "border_width":        2,
-    "border_focus":        theme["bg2"],
+    "border_focus":        theme["orange"],
     "border_normal":       theme["bg0_h"],
     "border_focus_stack":  theme["bg2"],
     "border_normal_stack": theme["bg0_h"]

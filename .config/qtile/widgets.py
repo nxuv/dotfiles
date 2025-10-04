@@ -174,7 +174,8 @@ widgets = {
         widgets = [
             widget.Systray(**fa_def),
             widget.Spacer(**spacer_def),
-            widget.CurrentLayoutIcon(**fa_def, custom_icon_paths = ["~/.config/qtile/icons/layouts/"]),
+            # widget.CurrentLayoutIcon(**fa_def, custom_icon_paths = ["~/.config/qtile/icons/layouts/"]),
+            widget.CurrentLayout(**fa_def, mode='icon', custom_icon_paths = ["~/.config/qtile/icons/layouts/"]),
             widget.Spacer(**spacer_def),
         ]
     )),

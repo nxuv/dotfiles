@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 # Usage:
 #     prog_name                    - Show docset picker and show docs for selected docset
 #     prog_name <docset>           - Show docs for <docset>

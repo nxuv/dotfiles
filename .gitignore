@@ -24,6 +24,7 @@
 **/cache/
 **/Cache/
 /*.*~
+/**/*.*~
 
 # Exclude useless configs
 /.config/cheat/cheatsheets/community/
@@ -280,6 +281,10 @@
 .node_*/
 /.bashdb_hist
 /.config/env_theme_name
+/.config/nnn/
+/.dbus/
+/.var/
+/.lesshst
 /test.*
 /steam.desktop
 /games/

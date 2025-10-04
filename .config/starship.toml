@@ -14,8 +14,14 @@ command_timeout = 1500
 # right_format = """$username$hostname"""
 
 # format = """$character${custom.zsh_mode}${custom.nvim}${custom.jobs}$directory"""
-format = """$character$jobs$directory"""
-right_format = """$git_commit$git_branch$git_status$username$hostname${custom.session}${custom.gitclean}${custom.gitdirty}"""
+# format = """$character$jobs$directory"""
+format = '\[$directory\] $jobs'
+# right_format = """$git_commit$git_branch$git_status$username$hostname${custom.session}${custom.gitclean}${custom.gitdirty}"""
+right_format = """$git_commit$git_branch$git_status$username$hostname${custom.session}"""
+
+[directory]
+format = '[$path]($style)[$read_only]($read_only_style)'
+read_only = ' <LOCKED>'
 
 [custom.jobs]
 symbol = '@'
@@ -61,12 +67,21 @@ style = "bold green"
 # CHARACTER FORMAT
 
 [character]
-success_symbol = '[▲](bright-white)'
-error_symbol = '[△](bright-white)'
-vimcmd_symbol             = '[▲](bright-white)'
-vimcmd_replace_one_symbol = '[▲](bright-white)'
-vimcmd_replace_symbol     = '[▲](bright-white)'
-vimcmd_visual_symbol      = '[▲](bright-white)'
+format = "$symbol"
+success_symbol = '[](bright-white)'
+error_symbol = '[!](bright-white)'
+vimcmd_symbol             = '[?](bright-white)'
+vimcmd_replace_one_symbol = '[?](bright-white)'
+vimcmd_replace_symbol     = '[?](bright-white)'
+vimcmd_visual_symbol      = '[?](bright-white)'
+
+# [character]
+# success_symbol = '[▲](bright-white)'
+# error_symbol = '[△](bright-white)'
+# vimcmd_symbol             = '[▲](bright-white)'
+# vimcmd_replace_one_symbol = '[▲](bright-white)'
+# vimcmd_replace_symbol     = '[▲](bright-white)'
+# vimcmd_visual_symbol      = '[▲](bright-white)'
 # disabled = true
 
 # GIT
@@ -85,24 +100,26 @@ format = " on [$symbol$branch]($style)"
 # ⚙ ◆ ▼ ▽
 [git_status]
 disabled = false
-conflicted = "c"
-ahead = "^"
-behind = "v"
-up_to_date = ""
-untracked = ""
-stashed = ""
-modified = ""
-staged = ""
-renamed = ""
-deleted = ""
+conflicted  = "c"
+ahead       = "^"
+behind      = "v"
+up_to_date  = ""
+untracked   = "?"
+stashed     = "$"
+modified    = "!"
+staged      = "+"
+renamed     = ">"
+deleted     = "x"
 typechanged = ""
-format = '[$all_status$ahead_behind]($style)'
-style = "bold purple"
+# format      = '[\[$all_status$ahead_behind\]]($style)'
+format      = '([\[$all_status$ahead_behind\]]($style))'
+style       = "bold purple"
 
 [custom.gitclean]
 when = """git rev-parse --show-toplevel && test "$(git status -s)" = """""
 style = "bright-white"
 format = " [⬢]($style) "
+# format = " [⬢]($style) "
 description = "Shown on clean git repository"
 ignore_timeout = true
 
@@ -110,6 +127,7 @@ ignore_timeout = true
 when = """git rev-parse --show-toplevel && test "$(git status -s)" != """""
 style = "bright-white"
 format = " [⬡]($style) "
+# format = " [⬡]($style) "
 description = "Shown when git has unstaged files"
 ignore_timeout = true
 
