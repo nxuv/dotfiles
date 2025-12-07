@@ -141,7 +141,7 @@ void main() {
         writeln("\033[0m]");
     }
 
-    writeln();
+    writeln("\0");
 
     // writeln("Last login: ", lastLogin);
     // writeln();

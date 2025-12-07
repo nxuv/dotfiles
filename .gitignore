@@ -28,6 +28,7 @@
 
 # Exclude useless configs
 /.config/cheat/cheatsheets/community/
+/.config/falkon/
 /.config/wireplumber/
 /.config/.isolated-storage
 /.config/balenaEtcher/
@@ -179,13 +180,17 @@
 /.config/nodemon.json
 /.config/inochi-creator/
 /.config/inochi-session/
-/.config/Min
+/.config/Min/
+/.config/falkon/
+/.config/discordo/
+/.config/netsurf/
 
-# Not own repos
+# Have own repos
 /.config/nvim/
 /.config/nvim
 /.config/despair.nvim/
 /.config/monolith.nvim/
+/.config/tasks/
 
 # Home dir ignore
 /.veadotube/
@@ -292,4 +297,5 @@
 /.wine/
 /mprocs.log
 /.quakespasm/
+/.rofi.pid
 

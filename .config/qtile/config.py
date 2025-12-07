@@ -54,8 +54,8 @@ def restart_on_randr(qtile, event):
 
 @hook.subscribe.startup_once
 def hook_startup_once():
-    screens[0].toggle_group(group_names[1]) # center
-    # screens[1].toggle_group(group_names[1]) # center
+    screens[0].toggle_group(group_names[1])
+    screens[1].toggle_group(group_names[2])
     # screens[0].toggle_group(group_names[2]) # right
     subprocess.Popen(home + "/.screenlayout/main.sh", env = os.environ)
     subprocess.Popen(home + "/.config/qtile/autostart.sh", env = os.environ)

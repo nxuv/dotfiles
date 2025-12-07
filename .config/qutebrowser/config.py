@@ -21,7 +21,7 @@ c.aliases = {
     'wqa': 'quit --save',
     'o': 'open',
     'yt': 'open https://youtube.com/',
-    'gh': 'open https://github.com/al1-ce',
+    'gh': 'open https://github.com/',
     'gl': 'open https://gitlab.com/',
     'tg': 'open https://web.telegram.org/k/',
     's': 'open',
@@ -33,7 +33,7 @@ c.aliases = {
     'bashfmt': 'open https://misc.flogisoft.com/bash/tip_colors_and_formatting',
 }
 
-c.url.default_page = 'https://home.al1-ce.dev/'
+c.url.default_page = 'https://home.sily.dev/'
 c.url.open_base_url = True
 
 eng_google = 'https://google.com/search?q={}&udm=14'
@@ -49,7 +49,7 @@ eng_yt = 'https://www.youtube.com/results?search_query={}'
 eng_music = 'https://music.yandex.ru/home?null={}'
 eng_dlang = 'https://google.com/search?domains=dlang.org&q={}+site:dlang.org/phobos&udm=14'
 eng_mk = 'https://market.yandex.ru/?q={}'
-eng_surf = 'https://surf.al1-ce.dev/?q={}'
+eng_surf = 'https://surf.sily.dev/?q={}'
 
 c.url.searchengines = {
     'DEFAULT': eng_surf,

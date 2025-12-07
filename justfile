@@ -3,6 +3,8 @@
 
 # Example justfile with a bunch of tasks that I'd want to reuse
 
+# sudo xbps-install $(xbps-query -Rs --regex --property pkgver '^SDL[23]' | awk '{print $2}')
+
 vpn:
     sudo iptables -F amnvpn.a.310.blockDNS
 

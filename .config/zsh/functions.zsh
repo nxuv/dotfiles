@@ -109,6 +109,36 @@ switch-theme() {
     __echoerr "Missing theme name"
 }
 
+if __has $HOME/.dotfiles/unbin/t.py; then
+    t() {
+        __T_DIR="$HOME/.config/tasks"
+        if [[ "$1" == '-s' || "$1" == "--sync" ]]; then
+            echo "> Syncing tasks with git repo,"
+            if [ $(git -C "$__T_DIR" status -s | wc -l) -eq 0 ]; then
+                echo "> no local changes detected, fetching remote,"
+                git -C "$__T_DIR" pull origin master
+            else
+                echo "> found local changes, fast-forwarding to remote,"
+                git -C "$__T_DIR" pull --ff origin master
+                echo "> pushing local changes."
+                git -C "$__T_DIR" add .
+                git -C "$__T_DIR" commit -m "$(date -u)"
+                git -C "$__T_DIR" push origin master
+            fi
+            echo "> Sync complete."
+        elif [[ "$1" == '-c' || "$1" == "--cd" ]]; then
+            cd "$__T_DIR"
+        elif [[ "$1" == '-h' || "$1" == "--help" ]]; then
+            $HOME/.dotfiles/unbin/t.py --help
+            echo ''
+            echo "  Custom Options:"
+            echo "    -s, --sync          sync git repo"
+            echo "    -c, --cd            cd into task dir"
+        else
+            $HOME/.dotfiles/unbin/t.py -t "$__T_DIR" $@
+        fi
+    }
+fi
 
 if __has $HOME/.dotfiles/unbin/confed; then
     conf() {
@@ -236,7 +266,7 @@ if [[ "$(uname -n)" == "Helios" ]]; then
     # alias boot-apollo='sudo grub-reboot Apollo && sudo shutdown -r 0'
     boot-apollo() {
         sudo sed -i -e '/saved_entry/c\saved_entry=Apollo' /boot/grub/grubenv
-        sudo shutdown -r 0
+        sudo shutdown -r now
     }
 fi
 

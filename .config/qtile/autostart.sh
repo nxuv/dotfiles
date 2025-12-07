@@ -20,11 +20,14 @@
 
 #                 1920/2 1080/2
 xdotool mousemove 960    540
+
+sleep 1
+
 xdotool click 1
 
 sleep 1
 
-xinput --map-to-output 'Melfas LGDisplay Incell Touch' DisplayPort-0
+xinput --map-to-output 'Melfas LGDisplay Incell Touch' DP-2
 
 # - ---------------------------------------------------------------------------- -
 # -                    /etc/X11/xorg.conf.d/40-libinput.conf                     -

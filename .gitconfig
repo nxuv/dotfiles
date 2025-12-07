@@ -1,7 +1,7 @@
 [user]
 	email = al1-ce@null.net
-	name = al1-ce
-    signingKey = /home/neko/.ssh/id_rsa.pub
+	name = nxuv
+    signingKey = /home/nxuv/.ssh/id_rsa.pub
 [init]
 	defaultBranch = master
 	; templatedir = /home/al1-ce/.git-templates

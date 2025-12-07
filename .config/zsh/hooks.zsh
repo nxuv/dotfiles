@@ -5,7 +5,7 @@ export ZSH_HOOKS_DONE="yes"
 __on_pwd_chage() {
     if [ -d .git ]; then
         __has onefetch && gitshort || git status
-        echo -e "\n"
+        echo ""
     fi
     ls
 }

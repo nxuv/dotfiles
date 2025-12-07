@@ -86,7 +86,7 @@ fi
 if __has onefetch; then
     alias onefetch='onefetch --true-color never --no-title -d authors -d churn -d lines-of-code -d commits --no-color-palette'
     alias gitfetch='onefetch -d created -d last-change -d project -d url -d size --no-art -d languages -d contributors -d version -d license'
-    alias gitshort='gitfetch | tr "\n" " "'
+    alias gitshort='gitfetch | tr "\n" " "; echo '''
 fi
 
 if __has buckle; then

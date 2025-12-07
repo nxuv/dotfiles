@@ -51,7 +51,14 @@ home            = os.path.expanduser('~')
 dotfiles        = home + "/.dotfiles"
 # altbrowser      = "vivaldi-stable"
 mybrowser       = "qutebrowser"
-altbrowser      = "min-browser"
+altbrowser      = "qutebrowser"
+
+if (is_tool("min-browser")):
+    altbrowser = "min-browser"
+
+if (is_tool("falkon")):
+    altbrowser = "falkon"
+
 # browser_private = "qutebrowser --target private-window"
 filemanager     = unrace_exec("ranger")
 filemanager_gui = "nemo"

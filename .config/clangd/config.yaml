@@ -1,0 +1,7 @@
+Diagnostics:
+  Suppress:
+    [
+      pp_invalid_directive,
+    ]
+Completion:
+  HeaderInsertion: Never
