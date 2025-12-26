@@ -1,0 +1,54 @@
+# - ---------------------------------------------------------------------------- -
+# -                                Config Ignore                                 -
+# - ---------------------------------------------------------------------------- -
+
+# programs
+/ytermusic/
+/obs-studio/
+/io.github.trenchbroom/
+/godot/
+/flameshot/
+/Vial/
+/discordo/
+/voicevox/
+/nnn/
+
+# services
+/pulse/
+/AmneziaVPN.ORG/
+/rustdesk/
+/OpenTabletDriver/
+#=gnome_settings?
+/dconf/
+
+# browsers
+/netsurf/
+/falkon/
+/Min/
+
+# git / languages
+/go/
+/gh/
+/gh-dash/
+
+# files
+/pavucontrol.ini
+/mimeapps.list
+/kritarc
+/kritadisplayrc
+/QtProject.conf
+/env_theme_name
+
+# misc
+/yay/
+
+# games
+/EgoSoft/
+/Risk_of_Rain/
+/StardewValley/
+
+# - ---------------------------------------------------------------------------- -
+# -                                Have own repos                                -
+# - ---------------------------------------------------------------------------- -
+/nvim/
+/tasks/

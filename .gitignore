@@ -5,306 +5,64 @@
 # *.[oa]
 # *~
 
-# Sensitive
-/.config/zsh/.zcompdump
+# - ---------------------------------------------------------------------------- -
+# -                                  Sensitive                                   -
+# - ---------------------------------------------------------------------------- -
 /.Xauthority
 
-# Machine-local
+# - ---------------------------------------------------------------------------- -
+# -                                Machine-local                                 -
+# - ---------------------------------------------------------------------------- -
 /.xstartwm
 /.xprofile
 /.Xauthority
-/.w3m/history
-/.w3m/cookie
-/.config/elinks/bookmarks
-/.config/elinks/cookies
-/.config/elinks/*hist
 
-# Exclude all that is unholy
+# - ---------------------------------------------------------------------------- -
+# -                          Exclude all that is unholy                          -
+# - ---------------------------------------------------------------------------- -
 **/__pycache__/
 **/cache/
 **/Cache/
 /*.*~
 /**/*.*~
-# **/.dub/
-
-# Exclude useless configs
-/.config/cheat/cheatsheets/community/
-/.config/ytermusic/
-/.config/falkon/
-/.config/wireplumber/
-/.config/.isolated-storage
-/.config/balenaEtcher/
-/.config/Code - OSS/
-/.config/Code/
-/.config/DMusic
-/.config/Beeper/
-/.config/jj/
-/.config/rustdesk/
-/.config/simple-update-notifier/
-/.config/EgoSoft/
-/.config/yay/
-/.config/Vial/
-/.config/lxqt/
-/.config/Epic
-/.config/Hardcode-Tray/
-/.config/voicevox/
-/.config/LunarG
-/.config/OpenTabletDriver/
-/.config/PrusaSlicer/
-/.config/QtProject.conf
-/.config/Risk_of_Rain/
-/.config/StardewValley/
-/.config/Vieb/
-/.config/VirtualBox
-/.config/aseprite/
-/.config/audacity
-/.config/autokey/
-/.config/backpack
-/.config/balena-etcher/
-/.config/bleachbit/
-/.config/blender/
-/.config/browsh/
-/.config/btop/
-/.config/calcurse/
-/.config/calcure/
-/.config/cava/
-/.config/cef_user_data/
-/.config/cod/
-/.config/companion-launcher/
-/.config/companion/
-/.config/configstore/
-/.config/cura/
-/.config/data-storage/
-/.config/dconf/
-/.config/discord/
-/.config/eDEX-UI/
-/.config/easytag/
-/.config/extratermqt/
-/.config/fcitx/
-/.config/ferium/
-/.config/fish/fundle/
-/.config/flameshot/
-/.config/flutter/
-/.config/font-manager/
-/.config/fontconfig/
-/.config/fontforge/
-/.config/geany/
-/.config/gh-dash/
-/.config/gh/
-/.config/git-graph/
-/.config/godot/
-/.config/go/
-/.config/gops/
-/.config/gomuks/
-/.config/gromit-mpx.ini
-/.config/mps-youtube/
-/.config/neovim-theme.lua
-/.config/neovim-distro.lua
-/.config/ytmetadl.ini
-/.config/gpick/
-/.config/gtk-3.0/
-/.config/gtt/
-/.config/gzdoom/
-/.config/hexchat/
-/.config/input-remapper-2/
-/.config/io.github.trenchbroom/
-/.config/itch/
-/.config/itd/
-/.config/karboncalligraphyrc
-/.config/kritadisplayrc
-/.config/kritarc
-/.config/kritashortcutsrc
-/.config/libreoffice/
-/.config/lite-xl/
-/.config/lnav/
-/.config/lutris/
-/.config/marksman/
-/.config/mc/
-/.config/mdless/
-/.config/mimeapps.list
-/.config/mpd/
-/.config/musikcube/
-/.config/musikcube/plugin_*
-/.config/ncmpcpp/
-/.config/nemo/
-/.config/neofetch/
-/.config/neovim-theme/
-/.config/nyxt/
-/.config/obs-studio/
-/.config/pacseek/
-/.config/pavucontrol.ini
-/.config/powerkit/
-/.config/powerline-shell/
-/.config/pulse/
-/.config/pyradio/
-/.config/qutebrowser/setup.cfg
-/.config/rofi.al1-ce/
-/.config/rofi/applets/
-/.config/rofi/colors/
-/.config/rofi/images/
-/.config/rofi/launchers/
-/.config/rofi/powermenu/
-/.config/rofi/scripts/
-/.config/screenkey.json
-/.config/selaco-ea-alice.ini
-/.config/selaco-ea/
-/.config/so/
-/.config/steam-tui/
-/.config/systemd/
-/.config/textualize/
-/.config/tg/
-/.config/todoer/
-/.config/touchegg/
-/.config/tui-chan/
-/.config/tuifi/
-/.config/typeracer/
-/.config/unity3d/
-/.config/via-nativia/
-/.config/weechat/
-/.config/wiki-tui/
-/.config/xarchiver/
-/.config/xdg-terminals.list
-/.config/xfce4/
-/.config/yamusic-tui/
-/.config/yandex-disk/
-/.config/yandex-music-player/
-/.config/yd-tools/
-/.config/ytmdl/
-/.config/yandex-cloud/
-/.config/zsh/.zcompdump
-/.config/AmneziaVPN.ORG/
-/.config/Pinta/
-/.config/kcalcrc
-/.config/MasterPlan/log_*
-/.config/PyNGtuber/
-/.config/Puppetstring/
-/.config/nodemon.json
-/.config/inochi-creator/
-/.config/inochi-session/
-/.config/Min/
-/.config/falkon/
-/.config/discordo/
-/.config/netsurf/
-
-# Have own repos
-/.config/nvim/
-/.config/nvim
-/.config/despair.nvim/
-/.config/monolith.nvim/
-/.config/tasks/
-
-# Home dir ignore
-/.veadotube/
-/.TrenchBroom/
-/.bash_history
-/.byobu/
-/.bun/
-/.cache/
-/.grip/
-/.calc_history
-/.cargo/
-/.dart-tool/
-/.dart/
-/.dartServer
-/.dotnet/
-/.drepl_history
-/.dub/
-/.dune-history
-/.dune-prelude
-/.eclipse/
-/.factorio/
-/.fehbg
-/.flutter
-/.fonts
-/.fonts/
-/.gdb_history
-/.gnupg/
-/.go/
-/.gradle/
-/.hashes
-/.histfile
-/.icons/
-/.imwheelrc
-/.inputrc
-/.irssi/
-/.itch/
-/.java/
-/.links/
-/.local/
-/.luarocks/
-/.minecraft/
-/.mypy_cache/
-/.newsboat/
-/.npm/
-/.nuget/
-/.nv/
-/.nvidia-settings-rc
-/.pki/
-/.psql_history
-/.pub-cache/
-/.pulse-cookie
-/.python_history
-/.redhat/
-/.renderdoc/
-/.rnd
-/.screenlayout/
-/.ssh/
-/.steam/
-/.steampath
-/.steampath/
-/.steampid
-/.steampid/
-/.streamdeck_ui.json
-/.subversion/
-/.surf/
-/.swt/
-/.taskbook.json
-/.taskbook/
-/.viminfo
-/.vscode-powertools/
-/.vscode-server/
-/.vscode/
-/.wget-hsts
-/.xmake/
-/.xorgxrdp.*
-/.yarn/
-/.yagpt-shell
-/.bash_logout
-/yagpt.log
-/.vmodules/
-/.templates/
-/VulkanSDK/
-/documents/
-/downloads/
-/floppy/
-/gamedisk/
-/go/
-/music/
-/video/
-/videos/
-/zk/
+**/.dub/
 .node_*
 .node_*/
-/.bashdb_hist
-/.config/env_theme_name
-/.config/nnn/
-/.dbus/
+
+# - ---------------------------------------------------------------------------- -
+# -                               Home dir ignore                                -
+# - ---------------------------------------------------------------------------- -
+# programs
+/.TrenchBroom/
+
+# services
+
+# browsers
+
+# git / languages
+/.npm/
+/.luarocks/
+/.go/
+/.ssh/
+/.pki/
+/.cargo/
+
+# files
+/.inputrc
+
+# misc
+/.screenlayout/
+/.icons/
+
+# desktop
+/downloads/
+/documents/
+
+# sys
 /.var/
-/.lesshst
-/test.*
-/steam.desktop
-/games/
-/.mozilla/
-/.wine/
-/mprocs.log
-/.quakespasm/
-/.rofi.pid
-/.ecereIDE/
-/.w3m/
-/.gdbinit
-/.bash_profile
-/.bashrc
-/.gdbinit
-/.lynxrc
-/.xstartwm
-/.tmux.conf
+/.gnupg/
+/.dbus/
+/.cache/
+
+# games
+

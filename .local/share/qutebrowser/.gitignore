@@ -1,0 +1,7 @@
+/webengine/
+/history*
+/*history
+/sessions/
+/*.log
+/state
+/blocked-hosts
