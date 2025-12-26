@@ -1,0 +1,54 @@
+.code-normal {
+    /* "#b9b9b9" */
+    color: white;
+}
+
+.code-comment {
+    /* "#7c7c7c" */
+    color: dimgray;
+}
+
+.token_number,
+.code-number {
+    /* "#5f819d" */
+    color: steelblue;
+    font-weight: bold;
+}
+
+.code-special {
+    /* "#af8431" */
+    color: saddlebrown;
+}
+
+.token_keyword,
+.code-statement {
+    /* "#903a3a" */
+    color: red;
+    font-weight: bold;
+}
+
+.token_string,
+.code-string {
+    /* "#9ca54e" */
+    color: lime;
+}
+
+.c-term-bold { font-weight: bold; }
+
+.c-dark-black { color: black; background: white; }
+.c-dark-red { color: red; }
+.c-dark-green { color: olive; }
+.c-dark-yellow { color: saddlebrown; }
+.c-dark-blue { color: darkslateblue; }
+.c-dark-purple { color: fuchsia; }
+.c-dark-cyan { color: darkturquoise; }
+.c-dark-white { color: dimgray; }
+
+.c-light-black { color: lightslategray; }
+.c-light-red { color: tomato; }
+.c-light-green { color: lime; }
+.c-light-yellow { color: khaki; }
+.c-light-blue { color: steelblue; }
+.c-light-purple { color: thistle; }
+.c-light-cyan { color: cyan; }
+.c-light-white { color: white; }

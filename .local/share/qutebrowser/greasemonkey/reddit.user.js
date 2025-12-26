@@ -7,7 +7,7 @@
 // @description
 // @include
 // ==/UserScript==
-
+/*
 function add_css(css_string) {
     let head = document.head;
 

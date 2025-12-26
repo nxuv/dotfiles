@@ -1,0 +1,35 @@
+# #!/usr/bin/env -S just --justfile
+# just reference: https://just.systems/man/en/
+# monolith flavor: ~/.config/nvim/readme/build.md
+#
+# set positional-arguments
+
+CFLAGS := "-Wall -Wextra -Werror -time"
+
+build FILEPATH:
+    #!/bin/bash
+    V_PATH="{{FILEPATH}}"
+    # check if filepath is absolute
+    if [[ "${V_PATH:0:1}" == / || "${V_PATH:0:2}" == ~[/a-z] ]]; then
+        # do nothing
+        true;
+    else
+        V_PATH="$HOME/.dot/sources/$(basename "$V_PATH")"
+    fi
+    V_FNAME="$(basename "$V_PATH" | cut -d. -f1)"
+    if [[ "$V_PATH" == *.d ]]; then
+        echo "Building D source '$V_PATH' to '/.local/share/bin/'"
+        dub build --single "$V_PATH"
+        mv $HOME/.dot/sources/build/* $HOME/.local/share/bin/
+        rm -rf $HOME/.dot/sources/build
+    elif [[ "$V_PATH" == *.c ]]; then
+        echo "Building C source '$V_PATH' to '$HOME/.local/share/bin/'"
+        gcc {{CFLAGS}} "$V_PATH" -o "$HOME/.local/share/bin/$V_FNAME"
+    elif [[ "$V_PATH" == *.cpp ]]; then
+        echo "Building C source '$V_PATH' to '$HOME/.local/share/bin/'"
+        g++ {{CFLAGS}} "$V_PATH" -o "$HOME/.local/share/bin/$V_FNAME"
+    else
+        echo "Must be a recognized source file"
+        exit 1
+    fi
+

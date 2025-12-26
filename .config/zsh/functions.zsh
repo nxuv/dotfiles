@@ -109,7 +109,7 @@ switch-theme() {
     __echoerr "Missing theme name"
 }
 
-if __has $HOME/.dotfiles/unbin/t.py; then
+if __has $HOME/.dot/unbin/t.py; then
     t() {
         __T_DIR="$HOME/.config/tasks"
         if [[ "$1" == '-s' || "$1" == "--sync" ]]; then
@@ -129,25 +129,25 @@ if __has $HOME/.dotfiles/unbin/t.py; then
         elif [[ "$1" == '-c' || "$1" == "--cd" ]]; then
             cd "$__T_DIR"
         elif [[ "$1" == '-h' || "$1" == "--help" ]]; then
-            $HOME/.dotfiles/unbin/t.py --help
+            $HOME/.dot/unbin/t.py --help
             echo ''
             echo "  Custom Options:"
             echo "    -s, --sync          sync git repo"
             echo "    -c, --cd            cd into task dir"
         else
-            $HOME/.dotfiles/unbin/t.py -t "$__T_DIR" $@
+            $HOME/.dot/unbin/t.py -t "$__T_DIR" $@
         fi
     }
 fi
 
-if __has $HOME/.dotfiles/unbin/confed; then
+if __has conf-dir; then
     conf() {
         if [ $# -gt 0 ]; then
             if [[ "$@" == "-"* ]]; then
-                ~/.dotfiles/unbin/confed $@
+                conf-dir $@
                 return 0
             fi
-            tmp_path="$(~/.dotfiles/unbin/confed -p $@)"
+            tmp_path="$(conf-dir -p $@)"
             if [[ "$tmp_path" == "" ]]; then
                 echo "Failed to find config or encoutered an error"
             else
@@ -160,63 +160,30 @@ if __has $HOME/.dotfiles/unbin/confed; then
     }
 fi
 
-if __has selectrepodir.js; then
+if __has tcc; then
     repos() {
-        cd $(selectrepodir.js)
+        cd "/g/$(echo "$(tcc -run $HOME/.dot/sources/listrepo.c)" | fzf --prompt="Select repo > " --layout=reverse --height=35%)"
     }
 fi
 
-if __has nvim; then
-    # nvim-switch() {
-    #     nvim_current="$(basename $(readlink ~/.config/nvim))"
-    #     rm ~/.config/nvim
-    #     if [[ "$nvim_current" == "monolith.nvim" ]]; then
-    #         echo "Current configuration is $nvim_current"
-    #         ln -sf ~/.config/despair.nvim ~/.config/nvim
-    #     else
-    #         echo "Current configuration is $nvim_current"
-    #         ln -sf ~/.config/monolith.nvim ~/.config/nvim
-    #     fi
-    #     echo "Set Neovim configuration to $(basename $(readlink ~/.config/nvim))"
-    # }
-
-    # nvim-set-config() {
-    #     if [ ! -d "$XDG_CONFIG_HOME/$@" ]; then
-    #         echo "Supplied config directory doesn't exist"
-    #         return 1
-    #     fi
-    #     rm ~/.config/nvim
-    #     ln -sf "$XDG_CONFIG_HOME/$@" "$XDG_CONFIG_HOME/nvim"
-    # }
-
-    nvmerge() {
-        if ( [[ "$@" == "-h" ]] || [[ "$@" == "--help" ]] ); then
-            echo "Usage:"
-            echo "    nvmerge [from] [into]"
-            echo ""
-            echo "Description:"
-            echo "    Diffs [from] and [into] and pipes output of diff"
-            echo "    into neovim while setting filename to [into]"
-            return 0
-        fi
-        if [ $# -lt 2 ]; then
-            __echoerr "Must provide two files for mergins"
-            return 1
-        fi
-        merge -A -q -p $2 $1 $2 | nvim +"file $2"
-    }
-fi
-
-if __has yadm; then
-    yadm-add() {
-        yadm add -u
-        yadm add ~/.local/share/nvim/templates -f
-        yadm add ~/.local/share/qutebrowser/greasemonkey -f
-        yadm add ~/.dotfiles
-        yadm add ~/.config/wezterm
-        yadm add ~/.config/qtile
-    }
-fi
+# if __has nvim; then
+#     nvmerge() {
+#         if ( [[ "$@" == "-h" ]] || [[ "$@" == "--help" ]] ); then
+#             echo "Usage:"
+#             echo "    nvmerge [from] [into]"
+#             echo ""
+#             echo "Description:"
+#             echo "    Diffs [from] and [into] and pipes output of diff"
+#             echo "    into neovim while setting filename to [into]"
+#             return 0
+#         fi
+#         if [ $# -lt 2 ]; then
+#             __echoerr "Must provide two files for mergins"
+#             return 1
+#         fi
+#         merge -A -q -p $2 $1 $2 | nvim +"file $2"
+#     }
+# fi
 
 if __has boxes; then
     b-warn() {
@@ -262,11 +229,11 @@ if __has nnn; then
     }
 fi
 
-if [[ "$(uname -n)" == "Helios" ]]; then
-    # alias boot-apollo='sudo grub-reboot Apollo && sudo shutdown -r 0'
-    boot-apollo() {
-        sudo sed -i -e '/saved_entry/c\saved_entry=Apollo' /boot/grub/grubenv
-        sudo shutdown -r now
-    }
-fi
+# if [[ "$(uname -n)" == "Helios" ]]; then
+#     # alias boot-apollo='sudo grub-reboot Apollo && sudo shutdown -r 0'
+#     boot-apollo() {
+#         sudo sed -i -e '/saved_entry/c\saved_entry=Apollo' /boot/grub/grubenv
+#         sudo shutdown -r now
+#     }
+# fi
 

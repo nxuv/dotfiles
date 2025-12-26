@@ -5,24 +5,24 @@
 
 [colors]
 ansi = [
-  "#101010", #Black
-  "#903a3a", # Red
-  "#6d7144", # Green
-  "#af8431", # Yellow
-  "#50616f", # Blue
-  "#92729f", # Purple
-  "#61837e", # Cyan
-  "#7c7c7c", # White
+  "#101010", # 0  Black
+  "#903a3a", # 1  Red
+  "#6d7144", # 2  Green
+  "#af8431", # 3  Yellow
+  "#50616f", # 4  Blue
+  "#92729f", # 5  Purple
+  "#61837e", # 6  Cyan
+  "#7c7c7c", # 7  White
 ]
 brights = [
-  "#8e8e8e", # Black
-  "#ce5252", # Red
-  "#9ca54e", # Green
-  "#f0c674", # Yellow
-  "#5f819d", # Blue
-  "#b48ac4", # Purple
-  "#73b8af", # Cyan
-  "#b9b9b9", # White
+  "#8e8e8e", # 8  Black
+  "#ce5252", # 9  Red
+  "#9ca54e", # 10 Green
+  "#f0c674", # 11 Yellow
+  "#5f819d", # 12 Blue
+  "#b48ac4", # 13 Purple
+  "#73b8af", # 14 Cyan
+  "#b9b9b9", # 15 White
 ]
 foreground = "#b9b9b9"
 background = "#101010"

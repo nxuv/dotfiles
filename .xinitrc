@@ -36,5 +36,5 @@ fi
 [ -f /etc/xprofile ] && . /etc/xprofile
 [ -f ~/.config/zsh/.zshenv ] && . ~/.config/zsh/.zshenv
 [ -f ~/.xprofile ] && . ~/.xprofile
-[ -f ~/.xexec ] && . ~/.xexec
+[ -f ~/.xstartwm ] && . ~/.xstartwm
 

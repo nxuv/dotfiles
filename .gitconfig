@@ -1,32 +1,25 @@
 [user]
-	email = al1-ce@null.net
+	email = nxuv@disr.it
 	name = nxuv
     signingKey = /home/nxuv/.ssh/id_rsa.pub
+
+[sendemail]
+    smtpserver = disroot.org
+    smtpuser = nxuv@disr.it
+    smtpencryption = ssl
+    smtpserverport = 465
+
+[credential "smtp://nxuv%40disr.it@disroot.org:465"]
+    ; important line, see https://stackoverflow.com/questions/79696018
+    helper =
+    helper = "!pass git/nxuv@disr.it"
+
 [init]
 	defaultBranch = master
 	; templatedir = /home/al1-ce/.git-templates
-[safe]
-	directory = /g/AtheOS
-	directory = /g/godot-dlang
-	directory = /g/confed
-	directory = /g/aur/confed
+
 [core]
-    ; pager = delta
 	filemode = false
-
-; [interactive]
-;     diffFilter = delta --color-only --features=interactive
-
-[delta]
-    navigate = true
-    light = false
-    features = unobtrusive-line-numbers decorations
-    whitespace-error-style = 22 reverse
-    line-numbers = true
-    side-by-side = true
-    syntax-theme = gruvbox-dark
-    plus-style = syntax "#222f22"
-    minus-style = syntax "#2f2222"
 
 [merge]
     conflictstyle = diff3
@@ -34,49 +27,20 @@
 [diff]
     colorMoved = default
 
-[delta "interactive"]
-    keep-plus-minus-markers = false
-
-[delta "decorations"]
-    commit-decoration-style = blue ol box
-    commit-style = raw
-    file-style = omit
-    hunk-header-decoration-style = blue ol ul
-    hunk-header-file-style = red
-    hunk-header-line-number-style = "#067a00"
-    hunk-header-style = file line-number syntax
-
-    file-decoration-style = none
-
-[delta "unobtrusive-line-numbers"]
-    line-numbers = true
-    line-numbers-minus-style = "#444444"
-    line-numbers-zero-style = "#444444"
-    line-numbers-plus-style = "#444444"
-    line-numbers-left-format = "{nm:>4}┊"
-    line-numbers-right-format = "{np:>4}│"
-    line-numbers-left-style = blue
-    line-numbers-right-style = blue
 [push]
 	autoSetupRemote = true
     recurseSubmodules = on-demand
+
 [gpg]
 	format = ssh
+
 [commit]
 	gpgSign = true
+
 [column]
 	ui = auto
-[maintenance]
-	repo = /g/sily
-	repo = /g/sily-docs
-	repo = /g/clib
-	repo = /g/faux
+
 [alias]
-	; branches = !/home/al1-ce/.dotfiles/scripts/git_scripts/git_branches.sh
-	; poll = !/home/al1-ce/.dotfiles/scripts/git_scripts/git_poll
- ;    backup = !/home/al1-ce/.dotfiles/scripts/git_scripts/git_backup.sh
-    ; repo: https://github.com/mlange-42/git-graph
-    ; graph = !/home/al1-ce/.cargo/bin/git-graph
     side = !/bin/ydiff -s -w0 --wrap
 	fpush = push --force-with-lease
     pullsubmodules = submodule update --recursive
@@ -89,12 +53,21 @@
     amend = commit --amend
     patch = apply --verbose
     make-patch = format-patch
-; [filter "test"]
-;   ; uses smudge command on pull and clean on commit
-; 	smudge = test_smudge
-; 	clean = test_clean
+
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
 	process = git-lfs filter-process
 	required = true
+
+[maintenance]
+	repo = /g/sily
+	repo = /g/sily-docs
+	repo = /g/clib
+	repo = /g/faux
+
+[safe]
+	directory = /g/AtheOS
+	directory = /g/godot-dlang
+	directory = /g/confed
+	directory = /g/aur/confed

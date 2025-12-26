@@ -1,10 +1,15 @@
 # style name or JSON path (default "auto")
-style: "~/.config/glow/gruvbox.json"
-# show local files only; no network (TUI-mode only)
-# local: false
-# mouse support (TUI-mode only)
-# mouse: false
+# style: "light"
+style: "/home/nxuv/.config/glow/gruvbox.json"
+# mouse wheel support (TUI-mode only)
+mouse: true
 # use pager to display markdown
-# pager: false
-# word-wrap at width
+pager: false
+# at which column should we word wrap?
 # width: 80
+# show all files, including hidden and ignored.
+all: false
+# show line numbers (TUI-mode only)
+showLineNumbers: true
+# preserve newlines in the output
+preserveNewLines: false

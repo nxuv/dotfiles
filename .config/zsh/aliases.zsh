@@ -38,7 +38,7 @@ alias j="fg %\$(jobs | awk '!/^(\()/' | gum choose | awk '{print substr(\$0, 2, 
 alias srcrc="source $XDG_CONFIG_HOME/zsh/.zshrc"
 
 __has eza       && alias ls="eza"
-__has fetch     && alias cls="clear && fetch"
+__has fetch     && alias cls="clear && source $XDG_CONFIG_HOME/zsh/motd.zsh"
 __has pkm       && alias pkg="pkm"
 __has shpool    && alias sesh="shpool"
 __has trash     && alias rm="trash"
@@ -53,14 +53,12 @@ __has tty-clock && alias clock='tty-clock -s -c -C 7'
 __has cmatrix   && alias cmatrix='cmatrix -C yellow'
 __has hr        && alias line="hr ─"
 __has musikcube && alias music="musikcube"
-__has neofetch  && alias neofetch='neofetch --config ~/.dotfiles/.neofetch-themes/basic.conf'
 __has nms       && alias nms='nms -a'
 __has pxv       && alias getcat="pxv -U https://cataas.com/cat -s fit"
 __has taskbook  && alias tb="taskbook"
 __has telnet    && alias mapscii='telnet mapscii.me'
 
 __has dart      && alias pub="dart pub"
-__has npm       && alias npm="~/.dotfiles/scripts/npm.js"
 __has reuse     && alias reuse="reuse --suppress-deprecation"
 
 __has trans     && alias tenru="trans -e google -I -hl en -t ru"
@@ -74,13 +72,14 @@ __has qtile     && alias qtile-restart='qtile cmd-obj -o cmd -f restart'
 
 __has zathura   && alias pdf="detach zathura"
 
+__has elinks    && alias el="elinks"
+
+__has xclip     && alias xclip="xclip -sel c"
+
 ( __has fzf && __has fc-list ) && alias ls-fonts='fc-list  --format="%{family[0]} %{style[0]}\n" | sort | uniq | fzf'
 
 if __has nvim; then
     alias nv=nvim
-    alias e='nvim $(gum file)'
-    alias monnvim="nvim-set-config monolith.nvim && nvim"
-    alias desnvim="nvim-set-config despair.nvim && nvim"
 fi
 
 if __has onefetch; then

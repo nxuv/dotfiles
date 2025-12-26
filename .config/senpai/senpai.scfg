@@ -1,0 +1,3 @@
+address "irc.libera.chat:6697"
+nickname "nxuv"
+password-cmd pass "irc/libera.chat"

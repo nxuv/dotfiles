@@ -224,9 +224,9 @@ def init_widgets():
         widgets["wc_icon"](),
         widgets["wc_text"](),
 
-        widgets["spacer"](),
-        widgets["lastfm_icon"](),
-        widgets["lastfm_text"](),
+        # widgets["spacer"](),
+        # widgets["lastfm_icon"](),
+        # widgets["lastfm_text"](),
 
         widgets["spacer"](),
         widgets["mic_icon"](),

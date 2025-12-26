@@ -1,0 +1,8 @@
+savedefault
+insmod ntfs
+insmod fat
+insmod part_gpt
+insmod part_msdos
+search --no-floppy --fs-uuid --set=root 1668-7420
+chainloader /EFI/Microsoft/Boot/bootmgfw.efi
+

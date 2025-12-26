@@ -1,4 +1,0 @@
-#!/usr/bin/env -S npx jsh
-/// <reference path="/home/al1-ce/.dotfiles/nvdefs/js/jsh.d.ts" />
-/// https://github.com/bradymholt/jsh
-

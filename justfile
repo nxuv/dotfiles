@@ -8,6 +8,9 @@
 vpn:
     sudo iptables -F amnvpn.a.310.blockDNS
 
+ping:
+    ping google.com
+
 # List available recipes
 @list:
     echo ""
@@ -20,7 +23,7 @@ vpn:
 
 # Show help/usage for "just" command
 @help: list
-    just --help
+    just --help --color=never
 
 @default: help
     echo ""
