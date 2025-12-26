@@ -17,7 +17,7 @@ command_timeout = 1500
 # format = """$character$jobs$directory"""
 format = '\[$directory\] $jobs'
 # right_format = """$git_commit$git_branch$git_status$username$hostname${custom.session}${custom.gitclean}${custom.gitdirty}"""
-right_format = """$git_commit$git_branch$git_status$username$hostname${custom.session}"""
+right_format = """$git_commit$git_branch$git_status$username$hostname"""
 
 [directory]
 format = '[$path]($style)[$read_only]($read_only_style)'

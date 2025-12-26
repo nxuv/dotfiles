@@ -1,46 +1,53 @@
 # Normal PATH
 # typeset -U PATH PATH
 
-export PATH="$HOME/.appimages:$PATH"
-export PATH="$HOME/.bin:$PATH"
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.dotfiles/bin:$PATH"
-export PATH="$HOME/.dotfiles/scripts:$PATH"
-export PATH="$HOME/.dotfiles/scripts/git_scripts:$PATH"
-export PATH="$HOME/.dotnet/:$PATH"
-export PATH="$HOME/.go/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.local/bin:$PATH"
-export PATH="$HOME/.local/scripts:$PATH"
-export PATH="$HOME/.local/share/bin:$PATH"
-export PATH="$HOME/.local/share/npm/bin:$PATH"
-export PATH="/bin:$PATH"
-export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
-export PATH="/sbin:$PATH"
-export PATH="/usr/bin:$PATH"
-export PATH="/usr/local/bin:$PATH"
-export PATH="/usr/local/homebrew/bin:$PATH"
-export PATH="/usr/sbin:$PATH"
-export PATH="/var/lib/flatpak/exports/bin/:$PATH"
+export PATH="$PATH:/sbin"
+export PATH="$PATH:/bin"
+export PATH="$PATH:/usr/sbin"
+export PATH="$PATH:/usr/bin"
+export PATH="$PATH:/usr/local/bin"
+export PATH="$PATH:$HOME/.local/share/npm/bin"
+export PATH="$PATH:$HOME/.local/share/bin"
+export PATH="$PATH:$HOME/.local/bin"
+export PATH="$PATH:$HOME/.dot/scripts/git_scripts"
+export PATH="$PATH:$HOME/.dot/scripts"
+export PATH="$PATH:$HOME/.bin"
+export PATH="$PATH:$HOME/.go/bin"
+export PATH="$PATH:$HOME/.cargo/bin"
+export PATH="$PATH:$HOME/.dotnet/"
+export PATH="$PATH:$HOME/.appimages"
+
+# TODO: check if it exists
+if [ -d "$XDG_DATA_HOME/gem/ruby" ]; then
+    [ ! -d "$XDG_DATA_HOME/gem/ruby/dummy/bin" ] mkdir -p "$XDG_DATA_HOME/gem/ruby/dummy/bin"
+    for dir in $XDG_DATA_HOME/gem/ruby/*/bin; do
+        [ -d "$dir" ] && export PATH="$PATH:$dir"
+    done
+fi
+
+# export PATH="$(echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}')"
 
 # zsh config
-if [ -f "$XDG_DATA_HOME/zsh/history" ]; then
-    export HISTFILE="$XDG_DATA_HOME/zsh/history"
-    export HISTZIE="8192"
-    export SAVEHIST="8192"
+if [ ! -f "$XDG_DATA_HOME/zsh/history" ]; then
+    mkdir -p "$XDG_DATA_HOME/zsh/"
+    touch    "$XDG_DATA_HOME/zsh/history"
 fi
+
+export HISTFILE="$XDG_DATA_HOME/zsh/history"
+export HISTZIE="8192"
+export SAVEHIST="8192"
 
 # Misc env
 export DXVK_ASYNC=1
 export EDITOR="/usr/bin/nvim"
-export FILE_PICKER_CMD="ranger"
+export FILE_PICKER_CMD="nnn"
 export HAS_ALLOW_UNSAFE="y"
 export HOMEBREW_NO_ENV_HINTS=true
 export MANPAGER="$PAGER"
 export NAP_THEME="gruvbox"
 export PAGER="less --use-color -R"
 export RANGER_LOAD_DEFAULT_RC=false
-export SHELL=/bin/zsh
+export SHELL="/bin/zsh"
 export STARSHIP_LOG="error"
 export TERM="xterm-256color"
 export WEBKIT_DISABLE_COMPOSITING_MODE=1
@@ -50,13 +57,13 @@ export GTK_THEME="Artix-dark"
 export QT_QPA_PLATFORMTHEME="qt5ct"
 
 # Program PATH env
-export CARGO_HOME=$HOME/.cargo/
-export GOPATH=$HOME/.go/
+export CARGO_HOME="$HOME/.cargo/"
+export GOPATH="$HOME/.go/"
 export INVDIR="$HOME/.local/share/inventory"
-export NODE_PATH="$(/usr/bin/npm root --quiet --silent -g)"
-export BUNDLE_PATH=$XDG_DATA_HOME/gem/
+export NODE_PATH="$XDG_DATA_HOME/npm/lib/node_modules"
+export BUNDLE_PATH="$XDG_DATA_HOME/gem"
 # export RUBY_ROOT=/usr/lib/ruby/gems/3.0.0
-export RUSTUP_HOME=$HOME/.rustup/
+export RUSTUP_HOME="$HOME/.rustup"
 export ZK_NOTEBOOK_DIR="$HOME/zk"
 export LYNX_CFG="$XDG_CONFIG_HOME/lynx/lynx.cfg"
 [ -d "/g" ] && export DEVDOCS_DIR="/g/devdocs/" || export DEVDOCS_DIR="$XDG_DATA_HOME/devdocs/"
@@ -84,17 +91,4 @@ export NNN_FCOLORS="0203040200050608030501"
 # NNN_COLORS='1234' ('#0a1b2c3d'/'#0a1b2c3d;1234')
 
 export NNN_OPTS="H"
-
-# Program dependant PATH
-# PATH="$RUBY_GEMS:$PATH"
-# PATH="$RUBY_ROOT:$PATH"
-
-# TODO: check if it exists
-if [ -d "$XDG_DATA_HOME/gem/ruby" ]; then
-    for dir in $XDG_DATA_HOME/gem/ruby/*/bin; do
-        [ -d "$dir" ] && export PATH="$dir:$PATH"
-    done
-fi
-
-export PATH="$(echo "$PATH" | awk -v RS=':' -v ORS=":" '!a[$1]++{if (NR > 1) printf ORS; printf $a[$1]}')"
 

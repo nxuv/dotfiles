@@ -10,24 +10,6 @@ __on_pwd_chage() {
     ls
 }
 
-__starship_prompt_builder() {
-    # hr "─"
-    export JOB_COUNT=$( jobs | wc -l )
-    [ ! -n "$(jobs)" ] && export JOB_COUNT=0
-
-    if jobs | grep -q nvim ; then
-        export STARSHIP_SHOW_NVIM=true
-    else
-        export STARSHIP_SHOW_NVIM=false
-    fi
-
-    if ( [ $STARSHIP_SHOW_NVIM = false ] && [ $JOB_COUNT -gt 0 ] ) || ( [ $STARSHIP_SHOW_NVIM = true ] && [ $JOB_COUNT -gt 1 ] ); then
-        export STARSHIP_SHOW_JOBS=true
-    else
-        export STARSHIP_SHOW_JOBS=false
-    fi
-}
-
 # ZSH's history is different from bash,
 # so here's my fucntion to remove
 # the last item from history.
@@ -80,7 +62,6 @@ __zsh_history_delete() {
 }
 
 chpwd_functions+=("__on_pwd_chage")
-precmd_functions+=("__starship_prompt_builder")
 precmd_functions+=("__zsh_history_delete")
 
 __fix_cursor() {

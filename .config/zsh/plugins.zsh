@@ -14,10 +14,3 @@ plug "zsh-users/zsh-syntax-highlighting"
 
 plug "zsh-users/zsh-history-substring-search"
 
-if __has fzf; then
-    source /usr/share/fzf/key-bindings.zsh
-    # source /usr/share/fzf/completion.zsh
-fi
-
-# plug "hlissner/zsh-autopair"
-
