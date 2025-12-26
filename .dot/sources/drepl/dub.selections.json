@@ -1,9 +1,0 @@
-{
-	"fileVersion": 1,
-	"versions": {
-		"colorize": "1.0.5",
-		"libdparse": "0.17.0",
-		"linenoise": {"path":"linenoise/"},
-		"stdx-allocator": "2.77.5"
-	}
-}

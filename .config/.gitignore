@@ -12,6 +12,10 @@
 /discordo/
 /voicevox/
 /nnn/
+/MasterPlan/
+/awesome/
+/cheat/
+/confed/
 
 # services
 /pulse/
@@ -20,6 +24,10 @@
 /OpenTabletDriver/
 #=gnome_settings?
 /dconf/
+/gtk-2.0/
+/gtk-3.0/
+/qt5ct/
+/qt6ct/
 
 # browsers
 /netsurf/
@@ -30,6 +38,7 @@
 /go/
 /gh/
 /gh-dash/
+/nix/
 
 # files
 /pavucontrol.ini
@@ -38,6 +47,7 @@
 /kritadisplayrc
 /QtProject.conf
 /env_theme_name
+/gromit-mpx.cfg
 
 # misc
 /yay/
