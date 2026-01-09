@@ -1,8 +1,9 @@
 /+ dub.sdl:
 name "setcursor"
+dependency "sily" version="~>5.0.2"
 targetType "executable"
 targetPath "build/"
-dependency "sily" version="~>5.0.2"
+targetName "setcursor"
 +/
 
 import std.stdio: writeln, write, File, readln;

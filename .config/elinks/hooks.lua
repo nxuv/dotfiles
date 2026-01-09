@@ -1,51 +1,31 @@
 ---@diagnostic disable: unused-vararg, deprecated, unused-local, unused-function, lowercase-global, undefined-global, param-type-mismatch, cast-local-type, undefined-field, need-check-nil
 
---[[
-Known stuffs
-http://elinks.or.cz/documentation/html/manual.html-chunked/ch14s03.html
-https://github.com/rkd77/elinks/blob/master/contrib/lua/hooks.lua.in
+local config = {
+    remove = {
+        style = true,
+        style_aggressive = true,
+        head_links = true,
+    },
+    underline = {
+        h1 = false,
+        h2 = false,
+        h3 = false,
+    }
+}
 
-goto_url_hook
-follow_url_hook
-pre_format_html_hook
-proxy_for_hook
-lua_console_hook
-
-_ALERT
-current_url
-current_link
-current_title
-current_document
-current_document_formatted
-pipe_read
-execute
-tmpname
-bind_key
-edit_bookmark_dialog
-xdialog
-set_option
-get_option
-reload
-goto_url
-elinks_home
-]]
-
--- local htmlparser = loadfile(elinks_home .. "htmlparser/init.lua")()
--- local htmlsyntax = loadfile(elinks_home .. "syntaxhighlight/init.lua")()
-
--- ./?.lua;/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua;/usr/lib/lua/5.1/?.lua;/usr/lib/lua/5.1/?/init.lua
--- print(package.path)
 package.path = package.path .. ";" ..
     elinks_home .. "?.lua;" ..
-    elinks_home .. "syntaxhighlight/?.lua;"
+    elinks_home .. "lua/?.lua;" ..
+    elinks_home .. "lua/syntax/?.lua;"
 
 local htmlparser = require("gumbo")
 -- https://github.com/orbitalquark/scintillua/tree/default/lexers
-local htmlsyntax = require("syntaxhighlight")
+local htmlsyntax = require("syntax")
+local markdown = require("markdown")
 
--- local ih = htmlsyntax.highlight_to_html("lua", "local function() end")
--- local el = htmlparser.parse(ih)
--- local al = el:select("pre")
+require "utils"
+
+local sourcehut = require("sourcehut")
 
 ----------------------------------------------------------------------
 -- hooks
@@ -71,23 +51,23 @@ function goto_url_hook(url, current_url)
 
     return url
 end
+-- IMPORTANT: do not leave empty, it will crash everything you hold dear
+-- follow_url_hooks = {n=0}
+-- function follow_url_hook(url)
+--     for i, fn in ipairs(follow_url_hooks) do
+--         local new, stop = fn(url)
+--         url = new
+--     end
+--
+--     return url
+-- end
 
-follow_url_hooks = {n=0}
-function follow_url_hook(url)
-    for i, fn in ipairs(follow_url_hooks) do
-        local new, stop = fn(url)
-        url = new
-    end
-
-    return url
-end
-
-quit_hooks = {n=0}
-function quit_hook(url, html)
-    for i, fn in ipairs(quit_hooks) do
-        fn()
-    end
-end
+-- quit_hooks = {n=0}
+-- function quit_hook(url, html)
+--     for i, fn in ipairs(quit_hooks) do
+--         fn()
+--     end
+-- end
 
 ----------------------------------------------------------------------
 --  case-insensitive string.gsub
@@ -111,8 +91,14 @@ end
 -- adding hooks
 ----------------------------------------------------------------------
 
+-- Case insensitive
 function starts_with(url, prefix)
-    return string.sub(url, 1, string.len (prefix)) == prefix
+    return string.sub(string.lower(url), 1, #prefix) == prefix
+end
+
+-- Case insensitive
+function ends_with(url, postfix)
+    return string.sub(string.lower(url), #url + 1 - #postfix, #url) == postfix
 end
 
 local function bang_search(url)
@@ -125,6 +111,20 @@ local function bang_search(url)
     return url
 end
 table.insert(goto_url_hooks, bang_search)
+
+-- local function follow_slash(url)
+--     if url == nil then return nil, nil end
+--     _ALERT("Url = " .. url)
+--     _ALERT("New = " .. url:sub(1, 7))
+--     _ALERT("Res = " .. url:sub(8, #url))
+--     if url:sub(1, 7) == "file://" then
+--         if url:sub(8, #url):sub(1, 1) == "/" then
+--             return "." .. url:sub(8, #url)
+--         end
+--     end
+--     return url
+-- end
+-- table.insert(follow_url_hooks, follow_slash)
 
 -- Don't take localhost as directory name
 -- local function expand_localhost(url)
@@ -140,156 +140,52 @@ table.insert(goto_url_hooks, bang_search)
 
 -- syntax on <pre data-language="c">
 
-local function remove_class(document, class_name)
-    local elements = document:getElementsByClassName(class_name)
-    for _, element in ipairs(elements) do element:remove() end
-end
-
-local function remove_tags(document, tag_name)
-    local elements = document:getElementsByTagName(tag_name)
-    for _, element in ipairs(elements) do element:remove() end
-end
-
-local function remove_id(document, id_name)
-    document:getElementById(id_name):remove()
-end
-
--- for node in document.body:walk() do
---     if node.localName == "meta" then end
--- end
-
-local function replace_attribute_if(node, attr, if_value, replace_value)
-    if node:getAttribute(attr) == if_value then
-        node:setAttribute(attr, replace_value)
-    end
-end
-
-local function insert_hr_before_class(document, classname)
-    local elements = document:getElementsByClassName(classname)
-    for _, element in ipairs(elements) do
-        element.parentNode:insertBefore(document:createElement("hr"), element)
-    end
-end
-
-local function insert_hr_after_class(document, classname)
-    local elements = document:getElementsByClassName(classname)
-    for _, element in ipairs(elements) do
-        element.parentNode:insertBefore(document:createElement("hr"), element.nextSibling)
-    end
-end
-
-local function insert_hr_before_tag(document, tag)
-    local elements = document:getElementsByTagName(tag)
-    for _, element in ipairs(elements) do
-        element.parentNode:insertBefore(document:createElement("hr"), element)
-    end
-end
-
-local function insert_hr_after_tag(document, tag)
-    local elements = document:getElementsByTagName(tag)
-    for _, element in ipairs(elements) do
-        element.parentNode:insertBefore(document:createElement("hr"), element.nextSibling)
-    end
-end
-
-local function insert_text_in_tag(document, tag, text)
-    local elements = document:getElementsByTagName(tag)
-    for _, element in ipairs(elements) do
-        if #element.children > 0 then
-            element:insertBefore(document:createTextNode(text), element.firstElementChild)
-        else
-            element.textContent = text .. element.textContent
-        end
-    end
-end
-
-local function sourcehut_filter(document)
-    remove_class(document, "icon")
-    remove_class(document, "navbar-nav")
-
-    -- local blob = document:getElementsByClassName("blob")[1]
-    -- blob.parentNode:insertBefore(document:createElement("hr"), blob)
-
-    insert_hr_before_class(document, "header-extension")
-
-    local code_views = document:getElementsByClassName("code-viewport")
-    for _, code in ipairs(code_views) do
-        remove_class(document, "lines")
-    end
-    local highlights = document:getElementsByClassName("highlight")
-    for _, highlight in ipairs(highlights) do
-        if highlight.tagName == "DIV" then
-            for node in highlight:walk() do
-                if node.tagName == "SPAN" then
-                    replace_attribute_if(node, "class", "c" , "token_comment")
-                    replace_attribute_if(node, "class", "c1", "token_comment")
-                    replace_attribute_if(node, "class", "ch", "token_comment")
-                    replace_attribute_if(node, "class", "cm", "token_comment")
-                    replace_attribute_if(node, "class", "cp", "token_comment")
-                    replace_attribute_if(node, "class", "cpf", "token_comment")
-                    replace_attribute_if(node, "class", "cs", "token_comment")
-
-                    replace_attribute_if(node, "class", "k" , "token_keyword")
-                    replace_attribute_if(node, "class", "kc", "token_keyword")
-                    replace_attribute_if(node, "class", "kd", "token_keyword")
-                    replace_attribute_if(node, "class", "kp", "token_keyword")
-                    replace_attribute_if(node, "class", "kr", "token_keyword")
-                    replace_attribute_if(node, "class", "kt", "token_keyword")
-                    replace_attribute_if(node, "class", "kn", "token_keyword")
-                    replace_attribute_if(node, "class", "no", "token_keyword")
-
-                    replace_attribute_if(node, "class", "gu", "token_number")
-                    replace_attribute_if(node, "class", "il", "token_number")
-                    replace_attribute_if(node, "class", "l" , "token_number")
-                    replace_attribute_if(node, "class", "m" , "token_number")
-                    replace_attribute_if(node, "class", "mb", "token_number")
-                    replace_attribute_if(node, "class", "mf", "token_number")
-                    replace_attribute_if(node, "class", "mh", "token_number")
-                    replace_attribute_if(node, "class", "mi", "token_number")
-                    replace_attribute_if(node, "class", "mo", "token_number")
-                    replace_attribute_if(node, "class", "se", "token_number")
-
-                    replace_attribute_if(node, "class", "na",  "token_special")
-                    replace_attribute_if(node, "class", "nc",  "token_special")
-                    replace_attribute_if(node, "class", "nd",  "token_special")
-                    replace_attribute_if(node, "class", "ne",  "token_special")
-                    replace_attribute_if(node, "class", "nf",  "token_special")
-
-                    replace_attribute_if(node, "class", "dl",  "token_string")
-                    replace_attribute_if(node, "class", "ld",  "token_string")
-                    replace_attribute_if(node, "class", "s" ,  "token_string")
-                    replace_attribute_if(node, "class", "s1",  "token_string")
-                    replace_attribute_if(node, "class", "s2",  "token_string")
-                    replace_attribute_if(node, "class", "sa",  "token_string")
-                    replace_attribute_if(node, "class", "sb",  "token_string")
-                    replace_attribute_if(node, "class", "sc",  "token_string")
-                    replace_attribute_if(node, "class", "sd",  "token_string")
-                    replace_attribute_if(node, "class", "sh",  "token_string")
-                    replace_attribute_if(node, "class", "si",  "token_string")
-                    replace_attribute_if(node, "class", "sr",  "token_string")
-                    replace_attribute_if(node, "class", "ss",  "token_string")
-                    replace_attribute_if(node, "class", "sx",  "token_string")
-
-                    -- replace_attribute_if(node, "class", "nx", "token_identifier")
-                    -- replace_attribute_if(node, "class", "o",  "token_operator")
-                    -- replace_attribute_if(node, "class", "p",  "token_parens")
-                end
-            end
-        end
-    end
-end
-
 local function process_code_tags(document)
+    -- if true then return end
     local pres = document:getElementsByTagName("pre")
     for _, pre in ipairs(pres) do
         local data_language = pre:getAttribute("data-language")
         if data_language then
+            -- Fix for `docs perl open-FILEHANDLE` code blocks
+            local code_tags = pre:getElementsByTagName("code")
+            for _, el_code in ipairs(code_tags) do
+                local el_text = document:createTextNode(el_code.innerHTML)
+                pre:replaceChild(el_text, el_code)
+            end
+
+            -- local hr
+            -- hr = document:createElement("hr")
+            -- pre.parentNode:insertBefore(hr, pre)
+            -- hr = document:createElement("hr")
+            -- pre.parentNode:insertBefore(hr, pre.nextSibling)
+
+            local pre_code = pre.innerHTML;
+            -- Fix for perl docs in general.
+            -- Usually you wouldn't see &gt; used anywhere
+            -- outside of web so I'll just assume it's not
+            -- intended to be there, particularly in code
+            -- blocks, unless it's html where we do want
+            -- those.
+            -- Possibly might affect javascript but we'll see
+            pre_code = string.gsub(pre_code, "&gt;", ">")
+            pre_code = string.gsub(pre_code, "&lt;", "<")
+            pre_code = string.gsub(pre_code, "&amp;", "&")
+
             local code, err = htmlsyntax.highlight_to_html(
                 data_language,
-                pre.innerHTML,
+                pre_code,
                 { class_prefix = "token_" }
             )
-            if err then _ALERT(err) else
+
+            -- See above
+            if data_language ~= "html" then
+                code = string.gsub(code, "&gt;", ">")
+                code = string.gsub(code, "&lt;", "<")
+                code = string.gsub(code, "&amp;", "&")
+            end
+
+            -- if err then _ALERT(err) else
+            if not err then
                 local element = htmlparser.parse(code, { contextElement = "pre" })
                 local e = element.documentElement.childNodes[1]
                 e:removeAttribute("class")
@@ -298,49 +194,89 @@ local function process_code_tags(document)
             end
         end
     end
-    local codes = document:getElementsByTagName("code")
-    for _, code in ipairs(codes) do
-        local e = document:createElement("span")
-        e.textContent = "["
-        code.parentNode:insertBefore(e, code)
-        e = document:createElement("span")
-        e.textContent = "]"
-        code.parentNode:insertBefore(e, code.nextSibling)
-    end
+    -- TODO: config.surround?
+    -- local codes = document:getElementsByTagName("code")
+    -- for _, code in ipairs(codes) do
+    --     local e = document:createElement("span")
+    --     e.textContent = "["
+    --     code.parentNode:insertBefore(e, code)
+    --     e = document:createElement("span")
+    --     e.textContent = "]"
+    --     code.parentNode:insertBefore(e, code.nextSibling)
+    -- end
 end
 
+-- url is current url
+-- html is current page source, doesn't have to be html
 local function pre_parse_html(url, html)
+    if starts_with(url, "gemini://") then return html, false end
+    if starts_with(url, "gopher://") then return html, false end
+    if starts_with(url, "mailto://") then return html, false end
+    if starts_with(url, "telnet://") then return html, false end
+    if starts_with(url, "irl://")    then return html, false end
+    if starts_with(url, "imap://")   then return html, false end
+    if starts_with(url, "smtp://")   then return html, false end
+    if starts_with(url, "ssh://")    then return html, false end
+
+    if starts_with(url, "file://") then
+        if ends_with(url, ".md") then
+            set_option("toggle-html-plain", true)
+            return "<!doctype html><html><body>" .. markdown(html) .. "</body></html>"
+        end
+        return html, false
+    end
+    -- if true then return html, false end
+
     local document = htmlparser.parse(html)
     local head = document.head
 
-    remove_tags(head, "link")
-    remove_tags(document, "style")
+    if config.remove.head_links then
+        remove_tags(head, "link")
+        -- TODO: remove only icon/rel/preload/css
+    end
+
     remove_tags(document, "script")
     remove_tags(document, "template")
 
-    insert_hr_after_tag(document, "h1")
-    -- insert_hr_after_tag(document, "h2")
-    -- insert_hr_after_tag(document, "h3")
+    if config.remove.style or config.remove.style_aggressive then
+        remove_tags(document, "style")
+    end
 
+    if config.remove.style_aggressive then
+        for node in document.documentElement:walk() do
+            if node.removeAttribute then
+                if node:hasAttribute("style") then
+                    node:removeAttribute("style")
+                end
+            end
+        end
+    end
+
+
+    if config.underline.h1 then
+        insert_hr_after_tag(document, "h1")
+    end
+    if config.underline.h2 then
+        insert_hr_after_tag(document, "h2")
+    end
+    if config.underline.h3 then
+        insert_hr_after_tag(document, "h3")
+    end
+
+    -- TODO: config.prefix?
     -- insert_text_in_tag(document, "h1", "#")
     -- insert_text_in_tag(document, "h2", "#")
     -- insert_text_in_tag(document, "h3", "#")
     -- insert_text_in_tag(document, "h4", "#")
     -- insert_text_in_tag(document, "h5", "#")
 
-    if starts_with(url, "https://git.sr.ht/~") then sourcehut_filter(document) end
+    if starts_with(url, "https://git.sr.ht/~") then sourcehut.filter(document) end
 
     process_code_tags(document)
 
     local out = document:serialize()
 
     return out or html, false
-
-    -- return htmlsyntax.highlight_to_html(
-    --     "lua",
-    --     [[function main(thing) return 12 .. "asdf" .. true end]],
-    --     { class_prefix = "token_", bare = true }
-    -- ), false
 end
 table.insert(pre_format_html_hooks, pre_parse_html)
 

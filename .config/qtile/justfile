@@ -1,9 +1,0 @@
-#!/usr/bin/env -S just --justfile
-# just reference  : https://just.systems/man/en/
-
-@default:
-    just --list
-
-gen:
-    ./scripts/gen-keybinding-img.py -c config.py -o images/
-

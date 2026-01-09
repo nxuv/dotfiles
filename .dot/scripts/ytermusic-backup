@@ -1,0 +1,17 @@
+#!/bin/bash
+
+V_DIR_MUSIC="$HOME/documents/music/ytermusic"
+V_DIR_CACHE="$HOME/.cache/ytermusic"
+
+die() {
+    echo "Error: $@"; exit 1
+}
+
+[ -d "$V_DIR_CACHE" ] || die "ytermusic cache dir not found"
+[ -d "$V_DIR_MUSIC" ] || mkdir -p "$V_DIR_MUSIC"
+
+# -a = recursive + preserve
+# -u = update, copies only newer
+# -v = verbose
+rsync -auv --progress $V_DIR_CACHE/ $V_DIR_MUSIC
+

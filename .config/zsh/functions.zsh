@@ -38,6 +38,10 @@ __has curl && cheat() {
     curl cheat.sh/$@
 }
 
+( __has mandoc && __has elinks ) && webman() {
+    man -c -T html $@ | elinks
+}
+
 __has wget && scrape() {
     if [ $# -gt 0 ]; then
         ddir="$(echo $@ | sed -e 's/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/')-$(date +'%Y-%m-%d')"
@@ -109,45 +113,13 @@ switch-theme() {
     __echoerr "Missing theme name"
 }
 
-if __has $HOME/.dot/unbin/t.py; then
-    t() {
-        __T_DIR="$HOME/.config/tasks"
-        if [[ "$1" == '-s' || "$1" == "--sync" ]]; then
-            echo "> Syncing tasks with git repo,"
-            if [ $(git -C "$__T_DIR" status -s | wc -l) -eq 0 ]; then
-                echo "> no local changes detected, fetching remote,"
-                git -C "$__T_DIR" pull origin master
-            else
-                echo "> found local changes, fast-forwarding to remote,"
-                git -C "$__T_DIR" pull --ff origin master
-                echo "> pushing local changes."
-                git -C "$__T_DIR" add .
-                git -C "$__T_DIR" commit -m "$(date -u)"
-                git -C "$__T_DIR" push origin master
-            fi
-            echo "> Sync complete."
-        elif [[ "$1" == '-c' || "$1" == "--cd" ]]; then
-            cd "$__T_DIR"
-        elif [[ "$1" == '-h' || "$1" == "--help" ]]; then
-            $HOME/.dot/unbin/t.py --help
-            echo ''
-            echo "  Custom Options:"
-            echo "    -s, --sync          sync git repo"
-            echo "    -c, --cd            cd into task dir"
-        else
-            $HOME/.dot/unbin/t.py -t "$__T_DIR" $@
-        fi
-    }
-fi
-
-# FIXME: where's that thing? https://github.com/nxuv/confed ??
-__has conf-dir && conf() {
+__has _func_show_config_dir && conf() {
     if [ $# -gt 0 ]; then
         if [[ "$@" == "-"* ]]; then
-            conf-dir $@
+            _func_show_config_dir $@
             return 0
         fi
-        tmp_path="$(conf-dir -p $@)"
+        tmp_path="$(_func_show_config_dir -p $@)"
         if [[ "$tmp_path" == "" ]]; then
             echo "Failed to find config or encoutered an error"
         else
@@ -159,8 +131,8 @@ __has conf-dir && conf() {
     fi
 }
 
-__has tcc && repos() {
-    cd "/g/$(echo "$(tcc -run $HOME/.dot/sources/listrepo.c)" | fzf --prompt="Select repo > " --layout=reverse --height=35%)"
+__has _func_show_repo_list && repos() {
+    cd "/g/$(echo "$(_func_show_repo_list)" | fzf --prompt="Select repo > " --layout=reverse --height=35%)"
 }
 
 if __has nvim; then

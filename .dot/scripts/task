@@ -1,0 +1,397 @@
+#!/bin/perl
+
+use 5.040;
+use strict;
+use warnings;
+use diagnostics;
+
+use Digest::SHA qw(sha1_hex);
+use Time::HiRes qw(time);
+use List::Util  qw(all max);
+
+my $ARGC = @ARGV;
+my $prog = "$0" =~ s/.+\/(.+)/$1/r;
+# suppress warning about uninit @ARGV
+@ARGV = ("") unless ($ARGC);
+
+# needs ternary for it to be trully 0
+my $is_interactive = (-t STDIN && -t STDOUT) ? 1 : 0;
+
+my $task_dir  = $ENV{"HOME"} . "/.config/tasks";
+my $task_file = $ENV{"HOME"} . "/.config/tasks/tasks";
+my $done_file = $ENV{"HOME"} . "/.config/tasks/tasks.done";
+
+sub error {
+    say STDERR join(' ', @_);
+    exit 1;
+}
+
+sub expect {
+    my ($cpos, $count, $arg) = @_;
+     error("Error: expected $count arguments to '$arg' but got @{[$ARGC - $cpos - 1]}") unless $ARGC > $cpos + $count;
+}
+
+sub new_task {
+    # my $task = @_; gets scalar value
+    # which means it gets length
+    my ($name) = @_;
+    my $time = time();
+    my $id   = sha1_hex($name . $time);
+    return {
+        name   => $name,
+        id     => $id,
+        handle => undef
+    };
+}
+
+sub old_task {
+    my ($name, $id) = @_;
+    return {
+        name   => $name,
+        id     => $id,
+        handle => undef
+    };
+}
+
+sub shorten_id {
+    my ($id, $ids) = @_;
+    for my $len (1..40) {
+        my $short = substr($id, 0, $len);
+        return $short if all { $_ eq $id or substr($_, 0, $len) ne $short } @$ids;
+    }
+    return $id;
+}
+
+sub unshorten_id {
+    my ($id, $ids) = @_;
+    my $uid = undef;
+    for (@$ids) {
+        if (/^$id.+/) {
+            unless ($uid) {
+                $uid = $_;
+            } else {
+                error "The ID '$id' matches more then a single ID.";
+            }
+        }
+    }
+    return $uid;
+}
+
+sub tasks_sync {
+    say "> Syncing tasks with git repo,";
+    if ( `git -C "$task_dir" status -s | wc -l` =~ s/\n$//r == 0 ) {
+        say "> no local changes detected, fetching remote,";
+        system "git", "-C", $task_dir, "pull", "origin", "master";
+    } else {
+        say "> found local changes, fast-forwarding to remote,";
+        system "git", "-C", "$task_dir", "pull", "--ff", "origin", "master";
+        say "> pushing local changes.";
+        system "git", "-C", "$task_dir", "add", ".";
+        system "git", "-C", "$task_dir", "commit", "-m", `date -u` =~ s/\n$//r =~ s/\s\s+/ /r;
+        system "git", "-C", "$task_dir", "push", "origin", "master";
+    }
+    say "> Sync complete.";
+}
+
+sub tasks_edit {
+    system $ENV{"EDITOR"} ? $ENV{"EDITOR"} : "nano", $task_file;
+}
+
+sub tasks_done {
+    system $ENV{"EDITOR"} ? $ENV{"EDITOR"} : "nano", $done_file;
+}
+
+sub print_help {
+    say "Usage: $prog [options] [text]";
+    say "";
+    say "Options:";
+    say "    If no options were specified as FIRST argument";
+    say "        then text will be added as new task,";
+    say "        or a list of current tasks will be printed";
+    say "        if no text was supplied.";
+    say "    When at least one option was supplied as first";
+    say "        argument then any text that doesn't match";
+    say "        any of the options will be ignored.";
+    say "";
+    say "    Actions:";
+    say "        -e, --edit <id> [text]";
+    say "                         Replace text in task with new text.";
+    say "        -f, --finish <id>";
+    say "                         Mark task as finished.";
+    say "        -r, --remove <id>";
+    say "                         Remove task from task list.";
+    say "";
+    say "    Output Options:";
+    say "        -g, --grep <regexp>";
+    say "                         Print only tasks containing <regexp>.";
+    say "        -v, --verbose    Output full task ID's.";
+    say "        -q, --quiet      Do not output ID's.";
+    say "        -d, --done       Show tasks from done list.";
+    say "                         Operating on done list through cli";
+    say "                         is currently impossible";
+    say "        -h, --help       Show this help message and exit.";
+    say "        -m, --form       Show formatting help.";
+    say "        -c, --color      Always outputs color and formatting.";
+    say "        -p, --plain      Never outputs color and formatting.";
+    say "        -s, --strip      Strips formatting characters from output.";
+    say "";
+    say "    Misc";
+    say "        -S, --sync       Sync task dir git repo.";
+    say "        -E, --edit-tasks Open task file in \$EDITOR.";
+    say "        -D, --edit-done  Open done file in \$EDITOR.";
+}
+
+sub print_formatting_help {
+    say "Task has a special syntax similar to markdown,";
+    say "    surround words with symbols and they will be";
+    say "    pretty formatted with \\e[Xm.";
+    say "Formatting is simple, here's the list of available options:";
+    say "    - *\e[1mbold\e[0m*";
+    say "    - =\e[2mdim\e[0m=";
+    say "    - _\e[4munderline\e[0m_";
+    say "    - ~\e[5mblink\e[0m~";
+    say "    - !\e[7mreverse\e[0m!";
+    say "    - -\e[8mhidden\e[0m- (hidden)";
+    say "There is also syntax for adding color output:";
+    say "    <r:\e[91mred text\e[0m>";
+    say "    {r:\e[41mred background\e[0m}";
+    say "    you can set which color it will be by";
+    say "    replacing r in <r: or {r: with your desired";
+    say "    color character:";
+    say "        k, black, r - red, g - green, y - yellow,";
+    say "        b - blue, m - magenta, c - cyan.";
+    say "Additional colors can be achieved by combining";
+    say "    color codes with any of formatting characters,";
+    say "    <b:=\e[94m\e[2mdim blue\e[0m=> or =<b:\e[94m\e[2mdim blue\e[0m>=";
+    say "    <b:\e[94mnormal blue\e[0m> or <b:\e[94mnormal blue\e[0m>";
+    say "    <b:*\e[94m\e[1mbrighter blue\e[0m*> or *<b:\e[94m\e[1mbrighter blue\e[0m>*";
+    say "Though for clarity I'd advice <c:*text*> variant.";
+    say "";
+    say "Another important consideration to make is declaring and terminating formatting";
+    say "    cautiously because it's not smart and does not know about any previous tags.";
+    say "Here is an example of what might happen:";
+    say "    some <b:*bold blue <r:red text that will> break*> here";
+    say "    some \e[94m\e[1mbold blue \e[91mred text that will\e[39m break\e[22m here";
+
+}
+
+my %opts = (
+    grep => 0, verbose => 0, quiet  => 0, done => 0,
+    color => 0, plain => 0, strip => 0,
+    edit => 0, finish  => 0, remove => 0,
+);
+
+my $has_grep = 0;
+
+for (my $i = 0; $i < $ARGC; ++$i) {
+    $_ = $ARGV[$i];
+    if (/^--?\w/) {
+        # maybe `splice @ARGV, $i, 1;` ?
+        if (/^-\w*h\w*$/ or /^--help$/)    { print_help(); exit 0; }
+        if (/^-\w*m\w*$/ or /^--form$/)    { print_formatting_help(); exit 0; }
+
+        if (/^-\w*S\w*$/ or /^--sync$/)       { tasks_sync(); exit 0; }
+        if (/^-\w*E\w*$/ or /^--edit-tasks$/) { tasks_edit(); exit 0; }
+        if (/^-\w*D\w*$/ or /^--edit-done$/)  { tasks_done(); exit 0; }
+
+        if (/^-\w*v\w*$/ or /^--verbose$/) { $opts{"verbose"} = $i + 1; }
+        if (/^-\w*q\w*$/ or /^--quiet$/)   { $opts{"quiet"}   = $i + 1; }
+        if (/^-\w*d\w*$/ or /^--done$/)    { $opts{"done"}    = $i + 1; }
+
+        if (/^-\w*c\w*$/ or /^--color$/) { $opts{"color"} = $i + 1; }
+        if (/^-\w*p\w*$/ or /^--plain$/) { $opts{"plain"} = $i + 1; }
+        if (/^-\w*s\w*$/ or /^--strip$/) { $opts{"strip"} = $i + 1; }
+
+        if (/^-\w*g$/ or /^--grep$/)   { expect($i, 1, "-g"); $opts{"grep"}   = $i + 1; $i += 1; }
+
+        if (/^-\w*e$/ or /^--edit$/)   { expect($i, 2, "-e"); $opts{"edit"}   = $i + 1; $i += 2; }
+        if (/^-\w*f$/ or /^--finish$/) { expect($i, 1, "-f"); $opts{"finish"} = $i + 1; $i += 1; }
+        if (/^-\w*r$/ or /^--remove$/) { expect($i, 1, "-r"); $opts{"remove"} = $i + 1; $i += 1; }
+    } else {
+        last;
+    }
+}
+
+open my $task_list, '<', $task_file or error("Failed to open '$task_file'.");
+open my $done_list, '<', $done_file or error("Failed to open '$done_file'.");
+
+my @task_arr = ();
+my @done_arr = ();
+
+while (<$task_list>) { push @task_arr, old_task($1, $2) if (/(.+?) \| id:(.+)/); }
+while (<$done_list>) { push @done_arr, old_task($1, $2) if (/(.+?) \| id:(.+)/); }
+
+close $task_list;
+close $done_list;
+
+$_->{"handle"} = shorten_id($_->{"id"}, [ map {$_->{"id"}} @task_arr ]) for @task_arr;
+$_->{"handle"} = shorten_id($_->{"id"}, [ map {$_->{"id"}} @done_arr ]) for @done_arr;
+
+my $is_edit = $opts{"edit"} || $opts{"finish"} || $opts{"remove"};
+my $is_tell = max($opts{"verbose"}, $opts{"quiet"}, $opts{"done"},
+                  $opts{"color"}, $opts{"strip"}, $opts{"plain"}, $opts{"grep"}) >= $ARGC;
+
+if ($is_tell && !$is_edit) {
+    my @out_arr = $opts{"done"} ? @done_arr : @task_arr;
+    @out_arr = grep { $_->{"name"} =~ m/.*?$ARGV[$opts{"grep"}].*/i } @out_arr if ($opts{"grep"});
+
+    if (($is_interactive || $opts{"color"}) && !($opts{"plain"} || $opts{"strip"})) {
+        for (@out_arr) {
+            my $esc  = '(?:\e\[\d+m)*?';
+            my $sym  = $esc . '[*=_~!-]*?' . $esc;
+            # code pre and after
+            my $cpre = '(?:[<{]\w:' . $sym . ')*?';
+            my $caft = '(?:' . $sym . '[>}])*?';
+            my $word = $sym . $cpre . '(?:\w|\w.*?\w)' . $caft . $sym;
+            # re range match pre and after
+            my $repr = '(?<!\w)(' . $esc . ')';
+            my $reaf  = '(' . $esc . ')(?!\w)';
+            $_->{"name"} =~ s/$repr\*($word)\*$reaf/\e[1m$1$2$3\e[22m/gi; # bold
+            $_->{"name"} =~ s/$repr\=($word)\=$reaf/\e[2m$1$2$3\e[22m/gi; # dim
+            $_->{"name"} =~ s/$repr\_($word)\_$reaf/\e[4m$1$2$3\e[24m/gi; # underline
+            $_->{"name"} =~ s/$repr\~($word)\~$reaf/\e[5m$1$2$3\e[25m/gi; # blink
+            $_->{"name"} =~ s/$repr\!($word)\!$reaf/\e[7m$1$2$3\e[27m/gi; # reverse
+            $_->{"name"} =~ s/$repr\-($word)\-$reaf/\e[8m$1$2$3\e[28m/gi; # hidden
+            my $colr = $esc . '(?:\w|\w.*?)\w' . $esc;
+            $_->{"name"} =~ s/$repr\<k:((?:\{[krgybmc]:)?$colr(?:})?)\>$reaf/\e[90m$1$2$3\e[39m/gi;
+            $_->{"name"} =~ s/$repr\<r:((?:\{[krgybmc]:)?$colr(?:})?)\>$reaf/\e[91m$1$2$3\e[39m/gi;
+            $_->{"name"} =~ s/$repr\<g:((?:\{[krgybmc]:)?$colr(?:})?)\>$reaf/\e[92m$1$2$3\e[39m/gi;
+            $_->{"name"} =~ s/$repr\<y:((?:\{[krgybmc]:)?$colr(?:})?)\>$reaf/\e[93m$1$2$3\e[39m/gi;
+            $_->{"name"} =~ s/$repr\<b:((?:\{[krgybmc]:)?$colr(?:})?)\>$reaf/\e[94m$1$2$3\e[39m/gi;
+            $_->{"name"} =~ s/$repr\<m:((?:\{[krgybmc]:)?$colr(?:})?)\>$reaf/\e[95m$1$2$3\e[39m/gi;
+            $_->{"name"} =~ s/$repr\<c:((?:\{[krgybmc]:)?$colr(?:})?)\>$reaf/\e[96m$1$2$3\e[39m/gi;
+
+            $_->{"name"} =~ s/$repr\{k:($colr)\}$reaf/\e[40m$1$2$3\e[49m/gi;
+            $_->{"name"} =~ s/$repr\{r:($colr)\}$reaf/\e[41m$1$2$3\e[49m/gi;
+            $_->{"name"} =~ s/$repr\{g:($colr)\}$reaf/\e[42m$1$2$3\e[49m/gi;
+            $_->{"name"} =~ s/$repr\{y:($colr)\}$reaf/\e[43m$1$2$3\e[49m/gi;
+            $_->{"name"} =~ s/$repr\{b:($colr)\}$reaf/\e[44m$1$2$3\e[49m/gi;
+            $_->{"name"} =~ s/$repr\{m:($colr)\}$reaf/\e[45m$1$2$3\e[49m/gi;
+            $_->{"name"} =~ s/$repr\{c:($colr)\}$reaf/\e[46m$1$2$3\e[49m/gi;
+
+            # what if I'd try and use m/(.*?)$match(.*?)/i instead with $match
+            # being something like ([*=_~!-])(\w|\w.*?)(\1) and then use $1
+            # to actually format everything
+            #
+            # or i can just make a proper parser?
+
+            $_->{"name"} =~ s/(?<=\d)(m\e\[)(?=\d)/;/gi;
+        }
+    }
+
+    if ($opts{"strip"}) {
+        for (@out_arr) {
+            my $sym  = '[*=_~!-]*?';
+            my $cpre = '(?:[<{]\w:' . $sym . ')*?';
+            my $caft = '(?:' . $sym . '[>}])*?';
+            my $word = $sym . $cpre . '(?:\w|\w.*?\w)' . $caft . $sym;
+            my $repr = '(?<!\w)';
+            my $reaf  = '(?!\w)';
+            $_->{"name"} =~ s/$repr\*($word)\*$reaf/$1/gi; # bold
+            $_->{"name"} =~ s/$repr\=($word)\=$reaf/$1/gi; # dim
+            $_->{"name"} =~ s/$repr\_($word)\_$reaf/$1/gi; # underline
+            $_->{"name"} =~ s/$repr\~($word)\~$reaf/$1/gi; # blink
+            $_->{"name"} =~ s/$repr\!($word)\!$reaf/$1/gi; # reverse
+            $_->{"name"} =~ s/$repr\-($word)\-$reaf/$1/gi; # hidden
+            my $colr = '(?:\w|\w.*?)\w';
+            $_->{"name"} =~ s/$repr\<w:($colr)\>$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\<r:($colr)\>$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\<g:($colr)\>$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\<y:($colr)\>$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\<b:($colr)\>$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\<m:($colr)\>$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\<c:($colr)\>$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\{k:($colr)\}$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\{r:($colr)\}$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\{g:($colr)\}$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\{y:($colr)\}$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\{b:($colr)\}$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\{m:($colr)\}$reaf/$1/gi;
+            $_->{"name"} =~ s/$repr\{c:($colr)\}$reaf/$1/gi;
+        }
+    }
+
+    if ($opts{"verbose"}) {
+        printf "%s - %s\n", $_->{"id"}, $_->{"name"} for @out_arr;
+    } elsif ($opts{"quiet"}) {
+        printf "%s\n", $_->{"name"} for @out_arr;
+    } else {
+        my $pad_len = max( map { length $_->{"handle"} } @out_arr );
+        printf "%-${pad_len}s - %s\n", $_->{"handle"}, $_->{"name"} for @out_arr;
+    }
+
+    exit 0;
+}
+
+if ($is_edit) {
+    if ($opts{"edit"}) {
+        my $sid = $ARGV[$opts{"edit"}];
+        my $content = join(' ', @ARGV[$opts{"edit"} + 1 .. $#ARGV]) =~ s/\n/ /gir;
+
+        my $id = unshorten_id($sid, [ map {$_->{"id"}} @task_arr ]);
+        error "The ID '$sid' does not match any task." unless $id;
+
+        my ($task) = grep { $_->{"id"} eq $id } @task_arr;
+
+        open my $task_list, '+<' , $task_file or error("Failed to open '$task_file'."); {
+            my @lines = <$task_list>;
+            seek($task_list, 0, 0);
+            truncate($task_list, 0);
+            for my $line (@lines) {
+                if ($line =~ /^.+? \| id:$id$/i) {
+                    print $task_list "$content | id:$task->{'id'}\n";
+                } else {
+                    print $task_list $line;
+                }
+            }
+        } close $task_list;
+        exit 0;
+    }
+
+    if ($opts{"finish"}) {
+        my $sid = $ARGV[$opts{"finish"}];
+
+        my $id = unshorten_id($sid, [ map {$_->{"id"}} @task_arr ]);
+        error "The ID '$sid' does not match any task." unless $id;
+
+        my ($task) = grep { $_->{"id"} eq $id } @task_arr;
+
+        open my $task_list, '+<' , $task_file or error("Failed to open '$task_file'."); {
+            my @lines = <$task_list>;
+            seek($task_list, 0, 0);
+            truncate($task_list, 0);
+            for my $line (@lines) {
+                print $task_list $line unless $line =~ /^.+? \| id:$id$/i;
+            }
+        } close $task_list;
+
+        open my $done_list, '>>', $done_file or error("Failed to open '$done_file'."); {
+            print $done_list "$task->{'name'} | id:$task->{'id'}\n";
+        } close $done_list;
+        exit 0;
+    }
+
+    if ($opts{"remove"}) {
+        my $sid = $ARGV[$opts{"remove"}];
+
+        my $id = unshorten_id($sid, [ map {$_->{"id"}} @task_arr ]);
+        error "The ID '$sid' does not match any task." unless $id;
+
+        open my $task_list, '+<' , $task_file or error("Failed to open '$task_file'."); {
+            my @lines = <$task_list>;
+            seek($task_list, 0, 0);
+            truncate($task_list, 0);
+            for my $line (@lines) {
+                print $task_list $line unless $line =~ /^.+? \| id:$id$/i;
+            }
+        } close $task_list;
+        exit 0;
+    }
+}
+
+open $task_list, '>>' , $task_file or error("Failed to open '$task_file'."); {
+    my $task = new_task(join ' ', @ARGV);
+
+    print $task_list "$task->{'name'} | id:$task->{'id'}\n";
+} close $task_list;
+

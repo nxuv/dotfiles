@@ -1,0 +1,20 @@
+#!/bin/bash -e
+# Kiss search but a bit simpler "*$@*"
+
+PKG_LIST="$(kiss search "*$@*")"
+echo "$PKG_LIST" | grep -v "^$KISS_ROOT/var/db" | while read line; do
+    PKG_STATE="-"
+    [ -z "$( echo "$PKG_LIST" | grep "$KISS_ROOT/var/db/kiss/installed/$(basename $line)" )" ] || PKG_STATE="*"
+    # echo "[$PKG_STATE] $(basename $(dirname $line)):$(basename $line)"
+    # TODO: description?
+
+        # Open the extension as a file descriptor.
+        exec 3< "$line/build"
+
+        # Grab the second line in the extension.
+        { read -r _ && IFS=\#$IFS read -r _ cmt; } <&3
+
+        # sed / .+// or / /_/ ..?
+        printf "[%s] %-23s %12s %s\\n" \
+            "$PKG_STATE" "$(basename $(dirname $line))::$(basename $line)" "$(cat "$line/version" | sed -r 's/ /_/' | sed -r 's/git_1/git/')" "$cmt"
+done

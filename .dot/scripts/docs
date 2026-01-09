@@ -12,6 +12,7 @@
 # Options:
 #     -h, --help  - This help information
 #     -c, --check - Check if script can be succesfully ran
+#     -f, --full  - Shows fzf in full size, must be before command
 #
 # Commands:
 #     get         - Download new docset
@@ -24,6 +25,8 @@
 # Select docs from devdocs.io using a fuzzy-finder for display at the CLI
 # Deps: tidy, xmlstarlet, jq, lynx, fzy, curl, POSIX, lr (leahneukirchen)
 # (This uses a few shell scripts from $HOME/bin. Look there for reference.)
+
+FZF_HEIGHT=35%
 
 NAME=$(basename "$0")
 TEMP="${TMPDIR-/tmp}/${NAME}.${$}.$(awk \
@@ -150,7 +153,7 @@ gen_pages() {
 
 regen() {
     lr "$DEVDOCS_DIR" -1 -s -t 'type == d' -t '!type == d || depth > 0' |
-        gen_pages "$(fzf --layout="reverse" --height=35% --prompt="Choose docs > " -0 -q "$@")"
+        gen_pages "$(fzf --layout="reverse" --height=$FZF_HEIGHT --prompt="Choose docs > " -0 -q "$@")"
         # gen_pages "$(fzy -p 'Choose docs > ')"
 
 }
@@ -191,9 +194,9 @@ download() {
 }
 
 get() {
-    list | fzf --layout="reverse" --height=35% --prompt="Choose a docset > " -0 -q "$@" | download
+    list | fzf --layout="reverse" --height=$FZF_HEIGHT --prompt="Choose a docset > " -0 -q "$@" | download
     # if [ $# -eq 0 ]; then
-    #     # list | fzf --layout="reverse" --height=35% --prompt="Choose a docset > " -0 -q "$@" | download
+    #     # list | fzf --layout="reverse" --height=$FZF_HEIGHT --prompt="Choose a docset > " -0 -q "$@" | download
     #     # list | fzy -p 'Choose a docset > ' | download
     # else
     #     list | awk '
@@ -220,14 +223,14 @@ doc_for() {
 
         if [ ! -d "$DEVDOCS_DIR/$slug" ]; then
             dirs="$(lr "$DEVDOCS_DIR" -1 -s -t 'type == d' -t '!type == d || depth > 0' -t 'name != "node_modules"')"
-            lang="$(echo "$dirs" | fzf --layout="reverse" --height=35% --prompt="Choose docs > " -1 -0 -q "$slug")"
+            lang="$(echo "$dirs" | fzf --layout="reverse" --height=$FZF_HEIGHT --prompt="Choose docs > " -1 -0 -q "$slug")"
             [ ! -n "$lang" ] && exit 1
             slug="$lang"
         fi
 
         jq -r '.entries[] | "\(.name) --- \(.path) --- (\(.type))"' \
             "${DEVDOCS_DIR}/${slug}/index.json" |
-            fzf --layout="reverse" --height=35% --prompt="Chose a topic > " |
+            fzf --layout="reverse" --height=$FZF_HEIGHT --prompt="Chose a topic > " |
             # fzy -p 'Choose a topic > ' |
             awk -F " --- " '{
                 h = index($2, "#")
@@ -244,10 +247,11 @@ doc_for() {
             #     <"${DEVDOCS_DIR}/${slug}/db.json" \
             #     >"${TEMP}/index.html"
 
+            # HANDLED BY RUNIT
             # screen -d -m http-server "${DEVDOCS_DIR}/${slug}/pages/" &
-            screen -d -m npm run --prefix="$DEVDOCS_DIR" serve &
+            # screen -DmS devdocs_server npm run --prefix="$DEVDOCS_DIR" serve &
 
-            sleep 0.35
+            # sleep 0.35
 
             # $var = exec "$var"
             # lynx -assume_charset=utf-8 \
@@ -257,21 +261,23 @@ doc_for() {
             #     "file://localhost/${DEVDOCS_DIR}/${slug}/pages/${dpath}.html${frag}"
 
             # not using screen and will not
-            pkill -9 screen
+            # taking my words back
+            # pkill -9 screen
+            # screen -S devdocs_server -X kill
         }
     }
 }
 
 doc() {
     lr "$DEVDOCS_DIR" -1 -s -t 'type == d' -t '!type == d || depth > 0' -t 'name != "node_modules"' |
-        doc_for "$(fzf --layout="reverse" --height=35% --prompt="Choose docs > ")"
+        doc_for "$(fzf --layout="reverse" --height=$FZF_HEIGHT --prompt="Choose docs > ")"
         # doc_for "$(fzy -p 'Choose docs > ')"
 }
 
 purge() {
     lang=""
     dirs="$(lr "$DEVDOCS_DIR" -1 -s -t 'type == d' -t '!type == d || depth > 0' -t 'name != "node_modules"')"
-    lang="$(echo "$dirs" | fzf --layout="reverse" --height=35% --prompt="Choose docs > " -0 -q "$@")"
+    lang="$(echo "$dirs" | fzf --layout="reverse" --height=$FZF_HEIGHT --prompt="Choose docs > " -0 -q "$@")"
     doc_dir="$DEVDOCS_DIR/$lang"
     [ ! -n "$lang" ] && exit 1
     echo "Selected '$lang' language"
@@ -309,6 +315,11 @@ main() {
         exit $excode
     ' INT TERM EXIT
     mkdir -p -m 700 "$TEMP"
+
+    if [[ "$1" == "--full" || "$1" == "-f" ]]; then
+        FZF_HEIGHT=100%
+        shift
+    fi
 
     if [ $# -eq 0 ]; then
         doc

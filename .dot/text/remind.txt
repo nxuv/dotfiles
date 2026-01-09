@@ -2,7 +2,6 @@
 btop                    system monitor
 gtop                    top but graph
 at                      execute scheduled command
-udisksctl mount -b /dev/sdc1
 
 # DEV                                                      #
 git-extras              git but more

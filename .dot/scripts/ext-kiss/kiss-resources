@@ -1,0 +1,13 @@
+#!/bin/sh -e
+# Read KISS web docs
+
+V_PLACES="$(echo "Wiki\nGithub\nCommunity Wiki\nCommunity Codeberg")"
+
+# IMPORTANT: set height to choice count + 2
+V_CHOICE="$(echo "$V_PLACES" | fzf --height=6)"
+
+[ "$V_CHOICE" = "Wiki" ] && xdg-open "https://kisslinux.github.io/" &
+[ "$V_CHOICE" = "Github" ] && xdg-open "https://github.com/orgs/kisslinux/repositories" &
+[ "$V_CHOICE" = "Community Wiki" ] && xdg-open "https://kisscommunity.org/" &
+[ "$V_CHOICE" = "Community Codeberg" ] && xdg-open "https://codeberg.org/kiss-community" &
+

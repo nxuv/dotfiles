@@ -1,0 +1,28 @@
+#!/bin/sh -e
+# Clean up package cache
+
+# PKG_LIST="$(kiss search "*$@*")"
+# echo "$PKG_LIST" | grep -v "^$KISS_ROOT/var/db" | while read line; do
+#     PKG_STATE="-"
+#     [ -z "$( echo "$PKG_LIST" | grep "$KISS_ROOT/var/db/kiss/installed/$(basename $line)" )" ] || PKG_STATE="*"
+#     echo "[$PKG_STATE] $(basename $(dirname $line)):$(basename $line)"
+#     # TODO: description?
+# done
+
+die() {
+    echo "Error: $@"; exit 1
+}
+
+confirm() {
+    read -r -p "$@" YN </dev/tty; YN="$(printf "%c" "$YN")"
+    [ "$YN" = "y" ] || [ "$YN" = "Y" ] && return 0; return 1
+}
+
+[ $# -ne 1 ] && die "Must supply a single argument of package name"
+
+CACHE_DIR=${XDG_CACHE_HOME:-"${HOME%"${HOME##*[!/]}"}/.cache"}
+CACHE_DIR=${CACHE_DIR%"${CACHE_DIR##*[!/]}"}/kiss
+PKG_CACHE="$CACHE_DIR/sources/$1"
+
+confirm "Do you want to delete '$PKG_CACHE'? [y/N]: " && rm -rf "$PKG_CACHE" || echo "Aborted."
+

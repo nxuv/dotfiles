@@ -1,16 +1,56 @@
-#!/usr/bin/env -S NODE_NO_WARNINGS=1 npx jsh
-/// <reference path="/home/nxuv/.local/share/definitions/js/jsh.d.ts" />
-/// https://github.com/bradymholt/jsh
+#!/bin/perl
 
-const text = readFile(env["HOME"] + "/.dot/text/remind.txt");
-const lines = text.split("\n");
+use 5.040;
 
-for (let i = 0; i < lines.length - 1; ++i) {
-    const line = lines[i];
-    if (line.startsWith("#")) {
-        echo("\x1b[2m\x1b[4m" + line + "\x1b[0m");
+use strict;
+use warnings;
+
+# say $ARGV[0] if (scalar @ARGV > 0);
+# say $#ARGV;       # no args, prints -1
+# say scalar @ARGV; # no args, prints  0
+
+my $mode = (scalar @ARGV > 0) ? $ARGV[0] : "cli";
+# say $mode;
+
+open(my $file, "<", $ENV{"HOME"} . "/.dot/text/remind.txt") or die "Failed to open < remind.txt:\n$!";
+
+# my $lines = ""; {
+#     local $/;
+#     $lines = <$file>;
+# }
+# close $file;
+# say $lines;
+
+if ($mode eq "web") {
+    say "<!doctype html><html><body>";
+    say "<p>&nbsp;</p>";
+}
+
+while (<$file>) {
+    if (/^#/) {
+        if ($mode eq "cli") {
+            print "\x1b[2m\x1b[4m" . $_ . "\x1b[0m";
+        }
+        if ($mode eq "web") {
+            say "</tbody></table>\n";
+            print s/#\s+(\w+)\s+#/<h1 id="$1"><a href="#$1">$1<\/a><\/h1><hr>\n/ri;
+            say "<table width='100%'><tbody>\n";
+            say "    <tr><th width='100%'>Command</th><th width='100%'>Comment</th></tr>";
+        }
     } else {
-        echo(line);
+        if ($mode eq "cli") {
+            print $_;
+        }
+        if ($mode eq "web") {
+            print s/(.+?)\s{4,100}(\S.+)/    <tr><td>$1<\/td><td align='left'>$2<\/td><\/tr>/ri;
+        }
     }
 }
+
+if ($mode eq "web") {
+    say "</body></html>"
+}
+
+close $file;
+
 

@@ -16,6 +16,8 @@
 /awesome/
 /cheat/
 /confed/
+/btop/
+/pip/
 
 # services
 /pulse/
@@ -51,6 +53,8 @@
 
 # misc
 /yay/
+/orchat/
+/youtube-tui/
 
 # games
 /EgoSoft/
@@ -62,3 +66,4 @@
 # - ---------------------------------------------------------------------------- -
 /nvim/
 /tasks/
+/qtile/

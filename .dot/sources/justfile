@@ -8,7 +8,9 @@ CFLAGS := "-Wall -Wextra -Werror -time"
 
 build FILEPATH:
     #!/bin/bash
+
     V_PATH="{{FILEPATH}}"
+    [ ! -d "$HOME/.local/share/bin" ] && mkdir -p "$HOME/.local/share/bin"
     # check if filepath is absolute
     if [[ "${V_PATH:0:1}" == / || "${V_PATH:0:2}" == ~[/a-z] ]]; then
         # do nothing
@@ -18,10 +20,16 @@ build FILEPATH:
     fi
     V_FNAME="$(basename "$V_PATH" | cut -d. -f1)"
     if [[ "$V_PATH" == *.d ]]; then
-        echo "Building D source '$V_PATH' to '/.local/share/bin/'"
-        dub build --single "$V_PATH"
-        mv $HOME/.dot/sources/build/* $HOME/.local/share/bin/
-        rm -rf $HOME/.dot/sources/build
+        if [ $(grep -q "dub.sdl:" "$V_PATH") ]; then
+            echo "Building D source '$V_PATH' with DUB to '$HOME/.local/share/bin/'"
+            dub build --single "$V_PATH"
+            mv $HOME/.dot/sources/build/* $HOME/.local/share/bin/
+            rm -rf $HOME/.dot/sources/build
+        else
+            echo "Building D source '$V_PATH' with DMD to '$HOME/.local/share/bin/'"
+            dmd "$V_PATH" -of="$HOME/.local/share/bin/$(basename $V_PATH .d)"
+            rm "$HOME/.local/share/bin/$(basename $V_PATH .d).o"
+        fi
     elif [[ "$V_PATH" == *.c ]]; then
         echo "Building C source '$V_PATH' to '$HOME/.local/share/bin/'"
         gcc {{CFLAGS}} "$V_PATH" -o "$HOME/.local/share/bin/$V_FNAME"
@@ -32,4 +40,13 @@ build FILEPATH:
         echo "Must be a recognized source file"
         exit 1
     fi
+
+list-installed:
+    #!/bin/bash
+
+    __has() {
+        command -v $@ 2>&1 >/dev/null && return 0 || return 1
+    }
+
+    __has eza && eza -l $HOME/.local/share/bin || ls -l $HOME/.local/share/bin
 

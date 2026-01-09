@@ -4,6 +4,7 @@ dependency "sily" version="~>5.0.2"
 dependency "sily:term" version="~>5.0.2"
 targetType "executable"
 targetPath "build/"
+targetName "git-poll"
 +/
 
 module app;

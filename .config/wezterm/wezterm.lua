@@ -1,9 +1,9 @@
 local wezterm = require('wezterm')
 local config = wezterm.config_builder()
 local io = require("io")
-
-local font = require("user.fonts").dina_remaster
--- local font = require("user.fonts").cozette
+local fonts = require("user.fonts")
+local font = fonts.dina_remaster
+-- local font = fonts.ark_pixel10
 
 -- FONTS
 -- config.font = wezterm.font(font.regular)
@@ -16,10 +16,37 @@ if f ~= nil then
     wezterm.add_to_config_reload_watch_list(confdir .. "/env_theme_name")
 end
 
-config.font = wezterm.font_with_fallback({font.regular, "Noto Sans Mono CJK JP", "Noto Sans CJK JP"})
+---@diagnostic disable-next-line: inject-fieldかみさまちつ
+config.font = wezterm.font_with_fallback({
+    -- fonts.unifontex.regular,
+    font.regular,
+    fonts.ark_pixel12.regular,
+    fonts.cozette.regular,
+    { family = "Noto Sans Mono CJK JP", scale = 0.95 },
+    { family = "Noto Sans CJK JP", scale = 0.95 }
+})
+font.rules[1].font = wezterm.font_with_fallback({
+    {family = 'DinaRemaster', weight = 'Bold', style = 'Normal', italic = false},
+    fonts.ark_pixel12.regular,
+    fonts.cozette.regular,
+})
+font.rules[2].font = wezterm.font_with_fallback({
+    {family = 'DinaRemaster', weight = 'Regular', style = 'Normal', italic = false},
+    fonts.ark_pixel12.regular,
+    fonts.cozette.regular,
+})
+font.rules[3].font = wezterm.font_with_fallback({
+    {family = 'DinaRemaster', weight = 'Bold', style = 'Normal', italic = false},
+    fonts.ark_pixel12.regular,
+    fonts.cozette.regular,
+})
+-- かたかなめろこへをそのちのさだめぞおぞお
 config.font_rules = font.rules
 config.font_size = font.size
 config.bold_brightens_ansi_colors = font.brighten
+config.use_cap_height_to_scale_fallback_fonts = true
+-- config.cell_width = 0.55
+-- config.line_height = 0.9
 config.cell_width = font.cell_width
 config.line_height = font.line_height
 config.harfbuzz_features = { "calt=0", "clig=0", "liga=0" }

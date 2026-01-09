@@ -119,6 +119,7 @@ local M = {
     },
 
     -- https://terminus-font.sourceforge.net/
+    -- https://files.ax86.net/terminus-ttf/
     terminus = {
         regular = {family = 'Terminus', weight = 'Regular', style = 'Normal', italic = false},
         size = 12,
@@ -141,50 +142,63 @@ local M = {
         }
     },
 
+    -- https://github.com/the-moonwitch/Cozette/releases/tag/v.1.30.0
     -- https://github.com/slavfox/Cozette
     cozette = {
         regular = {family = 'Cozette', weight = 'Medium', style = 'Normal', italic = false},
         size = 12,
-        brighten = true,
-        cell_width = 1.0,
-        line_height = 1.0,
-        rules = {
-            {
-                intensity = "Bold", italic = false,
-                font = wezterm.font({family = 'Cozette', weight = 'Medium', style = 'Normal', italic = false})
-            },
-            {
-                intensity = "Normal", italic = true,
-                font = wezterm.font({family = 'Cozette', weight = 'Medium', style = 'Normal', italic = false})
-            },
-            {
-                intensity = "Bold", italic = true,
-                font = wezterm.font({family = 'Cozette', weight = 'Medium', style = 'Normal', italic = false})
-            },
-        }
     },
 
     cozette_hidpi = {
         regular = {family = 'CozetteHiDpi', weight = 'Medium', style = 'Normal', italic = false},
         size = 12,
-        brighten = true,
-        cell_width = 1.0,
-        line_height = 1.0,
-        rules = {
-            {
-                intensity = "Bold", italic = false,
-                font = wezterm.font({family = 'CozetteHiDpi', weight = 'Medium', style = 'Normal', italic = false})
-            },
-            {
-                intensity = "Normal", italic = true,
-                font = wezterm.font({family = 'CozetteHiDpi', weight = 'Medium', style = 'Normal', italic = false})
-            },
-            {
-                intensity = "Bold", italic = true,
-                font = wezterm.font({family = 'CozetteHiDpi', weight = 'Medium', style = 'Normal', italic = false})
-            },
-        }
     },
-}
 
+    -- https://github.com/TakWolf/ark-pixel-font
+    -- 10px needs size 7
+    ark_pixel10 = {
+        regular = {family = 'Ark Pixel 10px M ja', weight = 'Regular', style = 'Normal', italic = false, scale = 0.65},
+        size = 7,
+    },
+
+    -- 12px needs size 9
+    ark_pixel12 = {
+        regular = {family = 'Ark Pixel 12px M ja', weight = 'Regular', style = 'Normal', italic = false, scale = 0.75},
+        size = 9,
+    },
+
+    -- 16px needs size 12
+    ark_pixel16 = {
+        regular = {family = 'Ark Pixel 16px M ja', weight = 'Regular', style = 'Normal', italic = false},
+        size = 12,
+    },
+
+    -- https://github.com/stgiga/UnifontEX
+    unifontex = {
+        regular = {family = 'UnifontExMono', weight = 'Regular', style = 'Normal', italic = false},
+        size = 12,
+        line_height = 0.9,
+        cell_width = 0.55
+    },
+
+    -- https://unifoundry.com/unifont/index.html
+    unifont = {
+        regular = {family = 'Unifont-JP', weight = 'Regular', style = 'Normal', italic = false},
+        size = 12,
+        cell_width = 0.55
+    }
+}
+-- https://github.com/mshioda/relaxed-typing-mono-jp
 return M
+
+--[[
+    12 px or 9 pt
+    14 px or 10.5 pt
+    16 px or 12 pt
+    18 px or 13.5 pt
+    20 px or 15 pt
+    22 px or 16.5 pt
+    24 px or 18 pt
+    28 px or 21 pt
+    32 px or 24 pt
+]]

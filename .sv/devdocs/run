@@ -1,0 +1,9 @@
+#!/bin/sh
+
+cd /g/devdocs/ || exit 1
+exec node index.js
+# screen -DmS devdocs_server npm run --prefix="/g/devdocs" serve
+# exec npm run --prefix="/g/devdocs" serve
+# screen -DmS devdocs_server node index.js
+# npm run --prefix="/g/devdocs" serve
+

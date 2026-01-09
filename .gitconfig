@@ -42,16 +42,14 @@
 
 [alias]
     side = !/bin/ydiff -s -w0 --wrap
-	fpush = push --force-with-lease
-    pullsubmodules = submodule update --recursive
+	lease = push --force-with-lease
+    modules = submodule update --recursive
     lg1 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' --all
     lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
     lg = lg1
     st = status -s
-    conf = config --global --edit
     uncommit = reset HEAD
     amend = commit --amend
-    patch = apply --verbose
     make-patch = format-patch
 
 [filter "lfs"]
@@ -60,14 +58,5 @@
 	process = git-lfs filter-process
 	required = true
 
-[maintenance]
-	repo = /g/sily
-	repo = /g/sily-docs
-	repo = /g/clib
-	repo = /g/faux
-
 [safe]
-	directory = /g/AtheOS
-	directory = /g/godot-dlang
-	directory = /g/confed
-	directory = /g/aur/confed
+	directory = *

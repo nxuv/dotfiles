@@ -1,0 +1,81 @@
+#!/bin/sh
+
+preformf() {
+    printf '\\e[%dm \033[%dm%s\033[%dm \\e[%dm%s' $1 $1 "$2" $3 $3 "$4"
+}
+
+preforml() {
+    printf '\\e[%dm \033[%dm%s\033[%dm \\e[%dm\n' $1 $1 "$2" $3 $3
+}
+
+echo ""
+echo "                             == Formatting =="
+echo ""
+
+preformf 1 "  bold    " 22 "  "
+preformf 2 "  dim     " 22 "  "
+preforml 4 "  line    " 24
+
+preformf 5 "  blink   " 25 "  "
+preformf 7 "  reverse " 27 "  "
+preforml 8 "  hidden  " 28
+
+echo ""
+echo "                          == Dark foreground =="
+echo ""
+
+printf '\\e[30m\033[30m  \033[107mblack\033[49m    \033[39m\\e[39m  '
+preformf 31 " red     " 39 "  "
+preforml 32 " green   " 39
+
+preformf 33 " yellow  " 39 "  "
+preformf 34 " blue    " 39 "  "
+preforml 35 " magenta " 39
+
+preformf 36 " cyan    " 39 "  "
+preforml 37 " gray    " 39
+
+echo ""
+echo "                          == Light foreground =="
+echo ""
+
+preformf 90 " black  " 39 "   "
+preformf 91 " red    " 39 "   "
+preforml 92 " green  " 39
+
+preformf 93 " yellow " 39 "   "
+preformf 94 " blue   " 39 "   "
+preforml 95 " magenta" 39
+
+preforml 96 " cyan   " 39
+
+echo ""
+echo "                         == Dark background =="
+echo ""
+
+printf '\\e[40m  \033[1m\033[40m\033[30mblack\033[39m  \033[49m\033[22m \\e[49m   '
+printf '\\e[41m  \033[1m\033[41m\033[30mred  \033[39m  \033[49m\033[22m \\e[49m   '
+printf '\\e[42m  \033[1m\033[42m\033[30mgreen\033[39m  \033[49m\033[22m \\e[49m\n'
+printf '\\e[43m  \033[1m\033[43m\033[30myellow\033[39m \033[49m\033[22m \\e[49m   '
+printf '\\e[44m  \033[1m\033[44m\033[30mblue\033[39m   \033[49m\033[22m \\e[49m   '
+printf '\\e[45m  \033[1m\033[45m\033[30mmagenta\033[39m\033[49m\033[22m \\e[49m\n'
+printf '\\e[46m  \033[1m\033[46m\033[30mcyan\033[39m   \033[49m\033[22m \\e[49m   '
+printf '\\e[47m  \033[1m\033[47m\033[30mwhite\033[39m  \033[49m\033[22m \\e[49m\n'
+
+
+echo ""
+echo "                         == Light background =="
+echo ""
+
+printf '\\e[100m \033[1m\033[100m\033[30mblack\033[39m  \033[49m\033[22m \\e[49m   '
+printf '\\e[101m \033[1m\033[101m\033[30mred  \033[39m  \033[49m\033[22m \\e[49m   '
+printf '\\e[102m \033[1m\033[102m\033[30mgreen\033[39m  \033[49m\033[22m \\e[49m\n'
+printf '\\e[103m \033[1m\033[103m\033[30myellow\033[39m \033[49m\033[22m \\e[49m   '
+printf '\\e[104m \033[1m\033[104m\033[30mblue\033[39m   \033[49m\033[22m \\e[49m   '
+printf '\\e[105m \033[1m\033[105m\033[30mmagenta\033[39m\033[49m\033[22m \\e[49m\n'
+printf '\\e[106m \033[1m\033[106m\033[30mcyan\033[39m   \033[49m\033[22m \\e[49m   '
+printf '\\e[107m \033[1m\033[107m\033[30mwhite\033[39m  \033[49m\033[22m \\e[49m\n'
+
+echo ""
+
+

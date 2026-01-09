@@ -6,6 +6,7 @@ name "floppy-watch"
 // dependency "sily:logger" version="~>1.4.1"
 targetType "executable"
 targetPath "build/"
+targetName "floppy-watch"
 +/
 
 module app;

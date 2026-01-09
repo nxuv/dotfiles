@@ -32,6 +32,7 @@ __has bat       && alias bat="bat --plain"
 __has bat       && alias bathelp='bat=--plain --language=help'
 __has feh       && alias feh="feh -Tdefault"
 __has ncal      && alias calendar='ncal -yMb'
+__has cal       && alias cal='cal -m'
 
 __has musikcube && alias music="musikcube"
 __has nvim      && alias nv="nvim"
@@ -46,8 +47,11 @@ __has grep      && alias grep="grep --color=auto"
 __has zathura   && alias pdf="detach zathura"
 
 __has elinks    && alias el="elinks"
+__has elinks    && alias remind="remind web | elinks"
 
 __has xclip     && alias xclip="xclip -sel c"
+
+__has kiss      && alias krepo="cd $XDG_DATA_HOME/kiss"
 
 ( __has fzf && __has fc-list ) && alias ls-fonts='fc-list  --format="%{family[0]} %{style[0]}\n" | sort | uniq | fzf'
 ( __has mpv && __has gum )     && alias play='mpv "$(gum file)"'

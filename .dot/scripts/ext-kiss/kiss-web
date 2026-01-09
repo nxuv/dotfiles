@@ -1,0 +1,42 @@
+#!/bin/sh -e
+# Read KISS web docs
+
+cd "$KISS_ROOT/usr/share/doc/kiss" 2>/dev/null || {
+    printf 'Documentation is missing from /usr/share/doc/kiss\n'
+    exit 1
+}
+
+_q=$1
+
+! [ -f "${_q:-.}/index.html" ] || file=./${_q:-.}/index.html
+! [ -f "${_q:-.}.html" ]       || file=./${_q:-.}.html
+! [ -f "${_q:-:}" ]           || file=./${_q:-.}
+
+# Fallback to package READMEs.
+# False positive, intended behavior.
+# shellcheck disable=2046
+[ "$file" ] || {
+    set -f
+    set +f -- $(kiss s "${_q##*/}")
+    file=${1:+"$1/README"}
+}
+
+# Fallback to search (allows 'kiss help firefox' to work).
+# False positive, intended behavior.
+# shellcheck disable=2046
+[ "$file" ] || {
+    set -f
+    set +f -- $(find . -name "${_q##*/}.html")
+    file=$1
+}
+
+: "${file:=404.html}"
+
+# echo "file://$PWD/$file"
+# $WEB_PAGER "file://$PWD/$file"
+
+
+screen -d -m http-server -p 2587 "$KISS_ROOT/usr/share/doc/kiss" &
+sleep 0.35
+$WEB_PAGER "http://127.0.0.1:2587/$file"
+pkill -9 screen

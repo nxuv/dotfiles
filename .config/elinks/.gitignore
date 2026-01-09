@@ -1,4 +1,7 @@
 /bookmarks
 /cookies
-/*hist
-
+/exmodehist
+/globhist
+/gotohist
+/searchhist
+/socket*

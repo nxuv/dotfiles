@@ -6,6 +6,7 @@ dependency "sily" version="~>5"
 dependency "dini" version="~>2"
 targetType "executable"
 targetPath "build/"
+targetName "ytmp3"
 +/
 
 

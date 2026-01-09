@@ -3,6 +3,13 @@
 /*     background: #101010; */
 /* } */
 
+* {
+    /* color: #827434; */
+    /* border-color: red; */
+    /* unaffected uhh */
+    /* https://github.com/rkd77/elinks/issues/262 */
+}
+
 .code-normal {
     color: #b9b9b9;
 }
@@ -39,38 +46,52 @@
 }
 
 code {
-    background: #252525;
+    /* background: #252525; */
+    color: #61837e;
 }
 
-pre {
-    background: #151515;
+/* pre { */
+/*     background: #151515; */
+/*     color: #61837e; */
+/* } */
+
+h1 {
+    /* color: #6d7144; */
+    /* background-color: #50616f; */
+}
+
+/* ol ul */
+ul {
+    list-style: "*";
+}
+li {
+    color: #92729f;
 }
 
 hr {
     color: #7c7c7c;
-    margin: 0;
 }
 
 .code-viewport .kn {
     color: red;
 }
 
-.c-term-bold { font-weight: bold; }
+/* .c-term-bold { font-weight: bold; } */
 
-.c-dark-black { color: #101010; background: #b9b9b9; }
-.c-dark-red { color: #903a3a; }
-.c-dark-green { color: #6d7144; }
-.c-dark-yellow { color: #af8431; }
-.c-dark-blue { color: #50616f; }
-.c-dark-purple { color: #92729f; }
-.c-dark-cyan { color: #61837e; }
-.c-dark-white { color: #7c7c7c; }
-
-.c-light-black { color: #8e8e8e; }
-.c-light-red { color: #ce5252; }
-.c-light-green { color: #9ca54e; }
-.c-light-yellow { color: #f0c674; }
-.c-light-blue { color: #5f819d; }
-.c-light-purple { color: #b48ac4; }
-.c-light-cyan { color: #73b8af; }
-.c-light-white { color: #b9b9b9; }
+/* .c-dark-black { color: #101010; background: #b9b9b9; } */
+/* .c-dark-red { color: #903a3a; } */
+/* .c-dark-green { color: #6d7144; } */
+/* .c-dark-yellow { color: #af8431; } */
+/* .c-dark-blue { color: #50616f; } */
+/* .c-dark-purple { color: #92729f; } */
+/* .c-dark-cyan { color: #61837e; } */
+/* .c-dark-white { color: #7c7c7c; } */
+/**/
+/* .c-light-black { color: #8e8e8e; } */
+/* .c-light-red { color: #ce5252; } */
+/* .c-light-green { color: #9ca54e; } */
+/* .c-light-yellow { color: #f0c674; } */
+/* .c-light-blue { color: #5f819d; } */
+/* .c-light-purple { color: #b48ac4; } */
+/* .c-light-cyan { color: #73b8af; } */
+/* .c-light-white { color: #b9b9b9; } */

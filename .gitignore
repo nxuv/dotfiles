@@ -16,6 +16,8 @@
 /.xstartwm
 /.xprofile
 /.Xauthority
+/.profile
+/.zprofile
 
 # - ---------------------------------------------------------------------------- -
 # -                          Exclude all that is unholy                          -
@@ -25,10 +27,19 @@
 **/Cache/
 /*.*~
 /**/*.*~
+/*.pid
+/**/*.pid
 **/.dub/
 .node_*
 .node_*/
 dub.selections.json
+/.*_history
+
+# - ---------------------------------------------------------------------------- -
+# -                          Stray temp files to remove                          -
+# - ---------------------------------------------------------------------------- -
+/*.md
+/*.txt
 
 # - ---------------------------------------------------------------------------- -
 # -                               Home dir ignore                                -
@@ -39,6 +50,7 @@ dub.selections.json
 # services
 
 # browsers
+/.lynxrc
 
 # git / languages
 /.npm/
@@ -47,9 +59,16 @@ dub.selections.json
 /.ssh/
 /.pki/
 /.cargo/
+/perl5/
+/.cpanm/
+/.cpan/
 
 # files
 /.inputrc
+/.hashes
+/.viminfo
+/.wget-hsts
+/.rnd
 
 # misc
 /.screenlayout/

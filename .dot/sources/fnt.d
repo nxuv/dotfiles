@@ -6,6 +6,7 @@ dependency "sily" version="~>1.4.1"
 dependency "sily:logger" version="~>1.4.1"
 targetType "executable"
 targetPath "build/"
+targetName "fnt"
 +/
 
 // FIXME: convert is deprecated, figure out how to use magick here
@@ -13,7 +14,7 @@ targetPath "build/"
 import std.getopt: getopt, Option, config;
 import std.stdio: writeln, write, File, readln;
 import std.array: split, replace, split, join, array;
-import std.process: wait, spawnProcess, execute, spawnShell, executeShell;
+import std.process: wait, spawnProcess, execute, spawnShell, executeShell, Pid;
 import std.file: tempDir, exists, remove, mkdirRecurse, rmdirRecurse, isFile; // tempDir
 import std.path: baseName;
 import std.algorithm.searching: countUntil, startsWith, canFind, endsWith;
@@ -53,6 +54,7 @@ string fontGoogleCache = "";
 string previewText = "";
 
 int main(string[] args) {
+    if (args[0] != "") { assistant(["This program is broken due to sid.ethz.ch not being accessible"]); return 1; }
     bool optVersion = false;
     auto help = getopt(
         args,
@@ -394,12 +396,13 @@ string[] getFontNamesGoogleAll() {
 string[] getFontNamesGoogle(string repo, bool recache = false) {
     if (recache) {
         string[] tmp;
-        auto res = executeShell(`curl -s "` ~ FONTS_GOOGLE ~ `/` ~ repo ~ `/"`);
+        auto res = execute(["curl", "-s", FONTS_GOOGLE ~ "/" ~ repo ~ "/"]);
         if (res.status != 0) {
-            assistant("Failed to retrieve google ofl index");
+            assistant("Failed to retrieve google " ~ repo ~ " index");
             writeln(res.output);
             exit(0);
         }
+        assistant("Retrieved google " ~ repo ~ " index");
         tmp = res.output[0..$-1].split('\n');
         tmp = tmp.filter!(a => a.startsWith("<a href=")).array;
 
@@ -479,9 +482,13 @@ void ensureFontDirectory() {
 
 void downloadFontCache() {
     if (exists(fontPackage)) remove(fontPackage);
-    spawnShell(`curl -s "` ~ FONTS_INDEX ~ `" -o "` ~ fontPackage ~ `"`);
+    Pid pid = spawnProcess(["curl", "-s", FONTS_INDEX, "-o", fontPackage]);
+    int ret = wait(pid);
+    if (ret != 0) { assistant(["Failed to download fonts,", "process exited with code " ~ ret.to!string]); return; }
+    assistant(["Successfully downloaded font cache"]);
     getFontNamesGoogle("ofl", true);
     getFontNamesGoogle("apache", true);
+    // getFontNamesDebian();
 }
 
 string getenv(string name) {
